@@ -1,2 +1,2 @@
 # master-photo
-Applications for Independent Photographers, make photo delivering easy, base on Node and React.
+Application for Independent Photographers, make photo delivering easy, base on Node and React.
