@@ -1,6 +1,6 @@
 import { Button } from "ui";
 
-export default function Web() {
+export default function Index() {
   return (
     <div>
       <h1>Web</h1>
