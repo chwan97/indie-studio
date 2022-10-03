@@ -5,6 +5,7 @@ import { css } from '@emotion/react'
 import HCaptcha from '@hcaptcha/react-hcaptcha'
 import Brand from 'components/Brand'
 import { useRouter } from 'next/router'
+import Captcha from '../components/Captcha'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -63,30 +64,12 @@ export default function Login() {
           >
             <Input.Password />
           </Form.Item>
-          <div
-            css={css`
-              height: 150px;
-            `}
-          >
-            <Form.Item
-              label="验证码"
-              name="captcha"
-              rules={[{ required: true, message: '请完成验证码' }]}
-            >
-              <HCaptcha
-                css={css`
-                  width: 325px;
-                `}
-                // sitekey="693470fb-ef3b-400c-8e7f-f1c8a805ede6"
-                sitekey="your_site_key"
-                languageOverride="zh-CN"
-                size="compact"
-                onVerify={(token, ekey) => {
-                  console.log(token, ekey)
-                }}
-              />
-            </Form.Item>
-          </div>
+          <Captcha
+            onVerify={(token, ekey) => {
+              console.log(token, ekey)
+            }}
+          />
+
           <div
             css={css`
               text-align: center;

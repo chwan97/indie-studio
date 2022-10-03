@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react'
-
 import type { ReactElement, ReactNode } from 'react'
 import type { NextPage } from 'next'
 import { AppProps } from 'next/app'
-import 'styles/main.less'
+import { ConfigProvider } from 'antd'
+import locale from 'antd/lib/locale/zh_CN'
 import Head from 'next/head'
+
+import 'styles/main.less'
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode
@@ -30,7 +32,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
         />
         <link href="/favicon.ico" />
       </Head>
-      {getLayout(<Component {...pageProps} />)}
+      <ConfigProvider locale={locale}>{getLayout(<Component {...pageProps} />)}</ConfigProvider>
     </>
   )
 }

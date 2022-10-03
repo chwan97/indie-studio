@@ -6,6 +6,7 @@ import {
   SettingOutlined,
   LoginOutlined,
   BlockOutlined,
+  UserOutlined,
 } from '@ant-design/icons'
 import { css } from '@emotion/react'
 import { Layout, Menu, Button, Dropdown } from 'antd'
@@ -23,6 +24,12 @@ const menuItems = [
     label: '图片库',
     key: 'image-lib',
   },
+  {
+    icon: <UserOutlined />,
+    label: '客户资料',
+    key: 'customer',
+  },
+
   {
     icon: <BlockOutlined />,
     label: '选片任务',
@@ -49,19 +56,11 @@ export default function AdminLayout({ children }: Props) {
         height: '100%',
       }}
     >
-      <Sider
-        theme="light"
-        onBreakpoint={broken => {
-          console.log(broken)
-        }}
-        onCollapse={(collapsed, type) => {
-          console.log(collapsed, type)
-        }}
-      >
+      <Sider theme="light">
         <Brand compact />
         <Menu
           mode="inline"
-          defaultSelectedKeys={['image-lib']}
+          defaultSelectedKeys={[router.pathname.replace('/', '')]}
           items={menuItems}
           onClick={item => {
             const { key } = item
@@ -107,8 +106,16 @@ export default function AdminLayout({ children }: Props) {
         </div>
       </Sider>
       <Layout>
-        <Content style={{ margin: '24px 16px 0' }}>
-          <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
+        <Content
+          css={css`
+            margin: 24px 16px;
+            background-color: white;
+          `}
+        >
+          <div
+            className="site-layout-background"
+            style={{ padding: 24, minHeight: 360, height: '100%', overflowY: 'scroll' }}
+          >
             {children}
           </div>
         </Content>

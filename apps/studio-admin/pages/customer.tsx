@@ -27,25 +27,15 @@ const columns: ColumnsType<DataType> = [
     render: text => <a>{text}</a>,
   },
   {
-    title: '名称',
+    title: '客户姓名',
     dataIndex: 'name',
     key: 'name',
     render: text => <a>{text}</a>,
   },
   {
-    title: '预览',
-    dataIndex: 'address',
-    key: 'address',
-  },
-  {
-    title: '类型',
+    title: '邮箱地址',
     dataIndex: 'age',
     key: 'age',
-  },
-  {
-    title: '大小',
-    dataIndex: 'status',
-    key: 'status',
   },
   {
     title: '创建日期',
@@ -91,7 +81,7 @@ const data: DataType[] = new Array(75).fill('').map((_, index) => {
   }
 })
 
-export default function ImageLib() {
+export default function Customer() {
   const [form] = Form.useForm()
 
   return (
@@ -111,14 +101,14 @@ export default function ImageLib() {
             <Form.Item name="id" rules={[]}>
               <Input
                 prefix={<UserOutlined className="site-form-item-icon" />}
-                placeholder="图片编号"
+                placeholder="编号"
               />
             </Form.Item>
             <Form.Item name="name" rules={[]}>
               <Input
                 prefix={<LockOutlined className="site-form-item-icon" />}
                 type="password"
-                placeholder="图片名称"
+                placeholder="名称"
               />
             </Form.Item>
             <Form.Item name="创建时间" rules={[]}>
@@ -146,7 +136,7 @@ export default function ImageLib() {
           `}
           type="primary"
         >
-          新建图片
+          新建客户
         </Button>
       </div>
       <Table columns={columns} dataSource={data} />
@@ -154,6 +144,6 @@ export default function ImageLib() {
   )
 }
 
-ImageLib.getLayout = function getLayout(page: ReactElement) {
+Customer.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>
 }

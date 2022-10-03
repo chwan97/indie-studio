@@ -1,11 +1,42 @@
 import { ReactElement } from 'react'
 import Layout from 'components/AdminLayout'
+import type { PaginationProps } from 'antd'
+import { Pagination } from 'antd'
+import { css } from '@emotion/react'
+
+const showTotal: PaginationProps['showTotal'] = total => `共 ${total} 项`
 
 export default function OptLog() {
   return (
-    <div>
-      <h1>OptLog</h1>
-    </div>
+    <>
+      <div
+        css={css`
+          margin-bottom: 15px;
+        `}
+      >
+        <Pagination size="small" total={50} showTotal={showTotal} />
+      </div>
+      <div
+        css={css`
+          height: calc(100% - 45px);
+          overflow-y: scroll;
+        `}
+      >
+        {new Array(90).fill('').map(() => {
+          return (
+            <p
+              css={css`
+                line-break: anywhere;
+                white-space: break-spaces;
+              `}
+            >
+              2022-3-23 23:23:23:
+              isd8d2dnksbf89uvefibewiucvewiuvwnvibweiobviwbevkewncinbeibviwoboivwebvnoiweni
+            </p>
+          )
+        })}
+      </div>
+    </>
   )
 }
 
