@@ -11,6 +11,7 @@
   "dependencies": {
     "@emotion/eslint-plugin": "^11.10.0",
     "@emotion/react": "^11.10.4",
+    "@hcaptcha/react-hcaptcha": "^1.4.4",
     "@supabase/supabase-js": "^1.35.7",
     "@supabase/ui": "^0.36.5",
     "antd": "^4.23.4",

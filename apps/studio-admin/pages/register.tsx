@@ -3,17 +3,15 @@ import styles from 'styles/login.module.css'
 import { Button, Checkbox, Form, Input } from 'antd'
 import { css } from '@emotion/react'
 import HCaptcha from '@hcaptcha/react-hcaptcha'
-import Brand from 'components/Brand'
-import { useRouter } from 'next/router'
+import Brand from '../components/Brand'
+import BackLoginBtn from "../components/BackLoginBtn";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 const supabase = createClient(supabaseUrl!, supabaseAnonKey!)
 
-export default function Login() {
-  const router = useRouter()
-
+export default function Register() {
   const onFinish = (values: any) => {
     console.log('Success:', values)
   }
@@ -21,7 +19,6 @@ export default function Login() {
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo)
   }
-
   return (
     <div
       css={css`
@@ -58,6 +55,18 @@ export default function Login() {
 
           <Form.Item
             label="密码"
+            name="password"
+            rules={[{ required: true, message: '请输入你的密码' }]}
+          >
+            <Input.Password />
+          </Form.Item>
+          <Form.Item
+            css={css`
+              position: relative;
+              left: -28px;
+              width: 353px;
+            `}
+            label="密码确认"
             name="password"
             rules={[{ required: true, message: '请输入你的密码' }]}
           >
@@ -101,32 +110,10 @@ export default function Login() {
                   margin-top: 24px;
                 `}
               >
-                登录
+                注册
               </Button>
             </Form.Item>
-
-            <Button
-              type="link"
-              css={css`
-                width: 100%;
-              `}
-              onClick={() => {
-                router.push('/reset-password')
-              }}
-            >
-              忘记密码?
-            </Button>
-            <Button
-              type="link"
-              css={css`
-                width: 100%;
-              `}
-              onClick={() => {
-                router.push('/register')
-              }}
-            >
-              还没有账号？点击注册
-            </Button>
+            <BackLoginBtn />
           </div>
         </Form>
       </div>

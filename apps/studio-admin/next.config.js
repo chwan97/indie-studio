@@ -10,9 +10,7 @@ module.exports = withTM(
     lessLoaderOptions: {
       lessOptions: {
         modifyVars: {
-          'primary-color': '#b736d0',
-          'border-radius-base': '2px',
-          /* ... */
+          'primary-color': '#b514b5',
         },
       },
     },

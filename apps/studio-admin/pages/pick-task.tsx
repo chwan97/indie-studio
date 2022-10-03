@@ -1,10 +1,16 @@
-import { Button } from "ui";
+import { Button } from 'ui'
+import { ReactElement } from 'react'
+import Layout from 'components/AdminLayout'
 
-export default function Index() {
+export default function PickTask() {
   return (
     <div>
-      <h1>Web</h1>
+      <h1>PickTask</h1>
       <Button />
     </div>
-  );
+  )
+}
+
+PickTask.getLayout = function getLayout(page: ReactElement) {
+  return <Layout>{page}</Layout>
 }

@@ -1,11 +1,11 @@
 import type { ReactElement } from 'react'
-import Layout from 'components/Layout'
+import Layout from 'components/AdminLayout'
 import type { NextPageWithLayout } from './_app'
 
 const ImageLib: NextPageWithLayout = function () {
   return (
     <div>
-      <h1>Docs</h1>
+      <h1>ImageLib</h1>
     </div>
   )
 }
@@ -13,4 +13,5 @@ const ImageLib: NextPageWithLayout = function () {
 ImageLib.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>
 }
+
 export default ImageLib
