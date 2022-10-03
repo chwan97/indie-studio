@@ -1,11 +1,11 @@
 import { createClient } from '@supabase/supabase-js'
-import styles from 'styles/login.module.css'
+import React, { ReactElement } from 'react'
 import { Button, Checkbox, Form, Input } from 'antd'
 import { css } from '@emotion/react'
-import HCaptcha from '@hcaptcha/react-hcaptcha'
-import Brand from '../components/Brand'
-import BackLoginBtn from '../components/BackLoginBtn'
-import Captcha from '../components/Captcha'
+
+import BackLoginBtn from 'components/BackLoginBtn'
+import Captcha from 'components/Captcha'
+import Layout from 'components/AuthLayout'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -23,62 +23,57 @@ export default function ResetPassword() {
   return (
     <div
       css={css`
-        margin: 0 auto;
-        padding: 150px 0;
-        user-select: none;
+        margin-top: 40px;
+        display: flex;
+        justify-content: center;
       `}
     >
-      <Brand />
-      <div
+      <Form
+        name="basic"
+        initialValues={{ remember: true }}
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+        autoComplete="off"
         css={css`
-          margin-top: 40px;
-          display: flex;
-          justify-content: center;
+          width: 325px;
         `}
       >
-        <Form
-          name="basic"
-          initialValues={{ remember: true }}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          autoComplete="off"
+        <Form.Item
+          label="邮箱"
+          name="username"
+          rules={[{ required: true, message: '请输入你的邮箱！' }]}
+        >
+          <Input />
+        </Form.Item>
+        <Captcha
+          onVerify={(token, ekey) => {
+            console.log(token, ekey)
+          }}
+        />
+        <div
           css={css`
-            width: 325px;
+            text-align: center;
           `}
         >
-          <Form.Item
-            label="邮箱"
-            name="username"
-            rules={[{ required: true, message: '请输入你的邮箱！' }]}
-          >
-            <Input />
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              css={css`
+                width: 100%;
+                margin-top: 24px;
+              `}
+            >
+              发送重置邮件
+            </Button>
           </Form.Item>
-          <Captcha
-            onVerify={(token, ekey) => {
-              console.log(token, ekey)
-            }}
-          />
-          <div
-            css={css`
-              text-align: center;
-            `}
-          >
-            <Form.Item>
-              <Button
-                type="primary"
-                htmlType="submit"
-                css={css`
-                  width: 100%;
-                  margin-top: 24px;
-                `}
-              >
-                发送重置邮件
-              </Button>
-            </Form.Item>
-            <BackLoginBtn />
-          </div>
-        </Form>
-      </div>
+          <BackLoginBtn />
+        </div>
+      </Form>
     </div>
   )
+}
+
+ResetPassword.getLayout = function getLayout(page: ReactElement) {
+  return <Layout>{page}</Layout>
 }

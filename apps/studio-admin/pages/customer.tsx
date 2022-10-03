@@ -38,6 +38,16 @@ const columns: ColumnsType<DataType> = [
     key: 'age',
   },
   {
+    title: '联系地址',
+    dataIndex: 'age',
+    key: 'age',
+  },
+  {
+    title: '联系方式',
+    dataIndex: 'age',
+    key: 'age',
+  },
+  {
     title: '创建日期',
     key: 'tags',
     dataIndex: 'tags',
@@ -101,7 +111,7 @@ export default function Customer() {
             <Form.Item name="id" rules={[]}>
               <Input
                 prefix={<UserOutlined className="site-form-item-icon" />}
-                placeholder="编号"
+                placeholder="客户编号"
               />
             </Form.Item>
             <Form.Item name="name" rules={[]}>

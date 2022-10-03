@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useState } from 'react'
 import { useRouter } from 'next/router'
 import {
   FolderOpenOutlined,
@@ -11,44 +11,18 @@ import {
 import { css } from '@emotion/react'
 import { Layout, Menu, Button, Dropdown } from 'antd'
 import Brand from 'components/Brand'
+import { adminRouter as menuItems } from '../constants'
+import Loading from './LoadingForAdmin'
 
-const { Header, Content, Footer, Sider } = Layout
+const { Content, Sider } = Layout
 
 interface Props {
   children: ReactNode
 }
 
-const menuItems = [
-  {
-    icon: <FolderOpenOutlined />,
-    label: '图片库',
-    key: 'image-lib',
-  },
-  {
-    icon: <UserOutlined />,
-    label: '客户资料',
-    key: 'customer',
-  },
-
-  {
-    icon: <BlockOutlined />,
-    label: '选片任务',
-    key: 'pick-task',
-  },
-  {
-    icon: <BarsOutlined />,
-    label: '操作日志',
-    key: 'opt-log',
-  },
-  {
-    icon: <SettingOutlined />,
-    label: '用户设置',
-    key: 'setting',
-  },
-]
-
 export default function AdminLayout({ children }: Props) {
   const router = useRouter()
+  const [loading, setLoading] = useState(false)
 
   return (
     <Layout
@@ -114,8 +88,15 @@ export default function AdminLayout({ children }: Props) {
         >
           <div
             className="site-layout-background"
-            style={{ padding: 24, minHeight: 360, height: '100%', overflowY: 'scroll' }}
+            style={{
+              padding: 24,
+              minHeight: 360,
+              height: '100%',
+              overflowY: 'scroll',
+              position: 'relative',
+            }}
           >
+            <Loading />
             {children}
           </div>
         </Content>
