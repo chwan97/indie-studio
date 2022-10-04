@@ -22,9 +22,10 @@ export default function OptLog() {
           overflow-y: scroll;
         `}
       >
-        {new Array(90).fill('').map(() => {
+        {new Array(90).fill('').map((_, index) => {
           return (
             <p
+              key={index}
               css={css`
                 line-break: anywhere;
                 white-space: break-spaces;

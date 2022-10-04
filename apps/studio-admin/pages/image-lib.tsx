@@ -6,6 +6,7 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import React from 'react'
 import { css } from '@emotion/react'
+import { useMainStore } from '../hooks'
 
 const { RangePicker } = DatePicker
 
@@ -93,6 +94,7 @@ const data: DataType[] = new Array(75).fill('').map((_, index) => {
 
 export default function ImageLib() {
   const [form] = Form.useForm()
+  const mainStore = useMainStore()
 
   return (
     <div>
@@ -145,6 +147,9 @@ export default function ImageLib() {
             margin-left: auto;
           `}
           type="primary"
+          onClick={() => {
+            console.log(mainStore.router)
+          }}
         >
           新建图片
         </Button>
