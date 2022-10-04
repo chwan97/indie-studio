@@ -122,7 +122,7 @@ export default function Index() {
               <Input
                 prefix={<LockOutlined className="site-form-item-icon" />}
                 type="password"
-                placeholder="客户名称"
+                placeholder="客户姓名"
               />
             </Form.Item>
             <Form.Item name="创建时间" rules={[]}>
@@ -153,7 +153,7 @@ export default function Index() {
             router.push('/pick-task/add')
           }}
         >
-          新建选片任务
+          添加选片任务
         </Button>
       </div>
       <Table columns={columns} dataSource={data} />

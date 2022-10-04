@@ -16,7 +16,7 @@ function AddCustomerModal(props: { store: CustomerStore }) {
 
   return (
     <Modal
-      title="新增客户"
+      title="创建客户信息"
       open={addModalVisible}
       onOk={() => {
         form.validateFields()

@@ -6,14 +6,11 @@ import { useRouter } from 'next/router'
 
 import Captcha from 'components/Captcha'
 import Layout from 'components/AuthLayout'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-const supabase = createClient(supabaseUrl!, supabaseAnonKey!)
+import { useMainStore } from '../hooks'
 
 export default function Login() {
   const router = useRouter()
+  const mainStore = useMainStore()
 
   const onFinish = (values: any) => {
     console.log('Success:', values)
@@ -34,7 +31,12 @@ export default function Login() {
       <Form
         name="basic"
         initialValues={{ remember: true }}
-        onFinish={onFinish}
+        onFinish={values => {
+          console.log('values', values)
+          console.log('mainStore.auth', mainStore.auth)
+          const { captcha, password, username } = values
+          mainStore.auth.login(username, password, captcha)
+        }}
         onFinishFailed={onFinishFailed}
         autoComplete="off"
         css={css`

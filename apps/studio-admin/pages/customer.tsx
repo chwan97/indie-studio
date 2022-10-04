@@ -124,7 +124,7 @@ export default function Customer() {
               <Input
                 prefix={<LockOutlined className="site-form-item-icon" />}
                 type="password"
-                placeholder="名称"
+                placeholder="姓名"
               />
             </Form.Item>
             <Form.Item name="创建时间" rules={[]}>
@@ -155,7 +155,7 @@ export default function Customer() {
             toggleAddModalVisible(true)
           }}
         >
-          新建客户
+          创建客户信息
         </Button>
       </div>
       <Table columns={columns} dataSource={data} />

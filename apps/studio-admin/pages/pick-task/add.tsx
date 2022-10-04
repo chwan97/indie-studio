@@ -29,7 +29,7 @@ export default function Index() {
           margin: 10px 0;
         `}
       >
-        新建选片任务
+        创建选片任务
       </h2>
       <div
         css={css`
@@ -147,7 +147,7 @@ export default function Index() {
                 type="link"
                 onClick={() => {}}
               >
-                新增
+                添加
               </Button>{' '}
               <Button
                 css={css`
@@ -170,7 +170,7 @@ export default function Index() {
                 type="link"
                 onClick={() => {}}
               >
-                新增
+                添加
               </Button>
             </div>
           </Form.Item>
