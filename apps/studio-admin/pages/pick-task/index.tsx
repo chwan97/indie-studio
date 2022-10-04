@@ -6,6 +6,7 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import React from 'react'
 import { css } from '@emotion/react'
+import { useRouter } from 'next/router'
 
 const { RangePicker } = DatePicker
 
@@ -33,7 +34,7 @@ const columns: ColumnsType<DataType> = [
     render: text => <a>{text}</a>,
   },
   {
-    title: '所有图片',
+    title: '任务图片',
     dataIndex: 'age',
     key: 'age',
   },
@@ -73,6 +74,7 @@ const columns: ColumnsType<DataType> = [
     render: (_, record) => (
       <Space size="middle">
         <a>编辑</a>
+        <a>发送选片邀请</a>
         <a>删除</a>
         <a>停用</a>
       </Space>
@@ -92,8 +94,9 @@ const data: DataType[] = new Array(75).fill('').map((_, index) => {
   }
 })
 
-export default function PickTask() {
+export default function Index() {
   const [form] = Form.useForm()
+  const router = useRouter()
 
   return (
     <div>
@@ -146,6 +149,9 @@ export default function PickTask() {
             margin-left: auto;
           `}
           type="primary"
+          onClick={() => {
+            router.push('/pick-task/add')
+          }}
         >
           新建选片任务
         </Button>
@@ -155,6 +161,6 @@ export default function PickTask() {
   )
 }
 
-PickTask.getLayout = function getLayout(page: ReactElement) {
+Index.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>
 }

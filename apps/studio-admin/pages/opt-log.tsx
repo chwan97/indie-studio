@@ -19,7 +19,7 @@ export default function OptLog() {
       <div
         css={css`
           height: calc(100% - 45px);
-          overflow-y: scroll;
+          overflow-y: auto;
         `}
       >
         {new Array(90).fill('').map((_, index) => {

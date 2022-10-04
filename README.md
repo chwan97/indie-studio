@@ -8,3 +8,5 @@
 `studio-admin` 应用后台
 
 `website` 官方网站
+
+Private repo, All rights reserved.

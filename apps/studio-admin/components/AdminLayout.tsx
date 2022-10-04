@@ -59,7 +59,7 @@ export default function AdminLayout({ children }: Props) {
               white-space: nowrap;
             `}
           >
-            长万长万长万长万长万长万
+            的撒个哦擦拭是的
           </div>
           <Button
             css={css`
@@ -88,7 +88,7 @@ export default function AdminLayout({ children }: Props) {
               padding: 24,
               minHeight: 360,
               height: '100%',
-              overflowY: 'scroll',
+              overflowY: 'auto',
               position: 'relative',
             }}
           >

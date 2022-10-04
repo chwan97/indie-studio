@@ -2,10 +2,12 @@ import { ReactElement } from 'react'
 import Layout from 'components/AdminLayout'
 import { Space, Table, Tag, Button, Form, Input, DatePicker } from 'antd'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
-
+import AddCustomerModal from 'components/AddCustomerModal'
 import type { ColumnsType } from 'antd/es/table'
 import React from 'react'
 import { css } from '@emotion/react'
+import { useLocalObservable } from 'mobx-react'
+import CustomerStore from '../store/page/CustomerStore'
 
 const { RangePicker } = DatePicker
 
@@ -93,6 +95,10 @@ const data: DataType[] = new Array(75).fill('').map((_, index) => {
 
 export default function Customer() {
   const [form] = Form.useForm()
+  const customerStore = useLocalObservable(() => {
+    return new CustomerStore()
+  })
+  const { addModalVisible, toggleAddModalVisible } = customerStore
 
   return (
     <div>
@@ -145,11 +151,15 @@ export default function Customer() {
             margin-left: auto;
           `}
           type="primary"
+          onClick={() => {
+            toggleAddModalVisible(true)
+          }}
         >
           新建客户
         </Button>
       </div>
       <Table columns={columns} dataSource={data} />
+      <AddCustomerModal store={customerStore} />
     </div>
   )
 }

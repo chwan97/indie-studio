@@ -18,7 +18,7 @@ export default function Setting() {
   return (
     <div>
       <p>
-        用户名：长万
+        用户名：的撒
         <Button
           type="link"
           onClick={() => {

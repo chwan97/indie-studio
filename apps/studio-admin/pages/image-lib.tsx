@@ -1,12 +1,15 @@
 import { ReactElement } from 'react'
-import Layout from 'components/AdminLayout'
+import { observer, useLocalObservable } from 'mobx-react'
 import { Space, Table, Tag, Button, Form, Input, DatePicker } from 'antd'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 
+import Layout from 'components/AdminLayout'
+import AddImageModal from 'components/AddImageModal'
 import type { ColumnsType } from 'antd/es/table'
 import React from 'react'
 import { css } from '@emotion/react'
-import { useMainStore } from '../hooks'
+import { useMainStore } from 'hooks'
+import ImageLibStore from '../store/page/ImageLibStore'
 
 const { RangePicker } = DatePicker
 
@@ -73,7 +76,6 @@ const columns: ColumnsType<DataType> = [
     key: 'action',
     render: (_, record) => (
       <Space size="middle">
-        <a>编辑</a>
         <a>删除</a>
       </Space>
     ),
@@ -92,7 +94,10 @@ const data: DataType[] = new Array(75).fill('').map((_, index) => {
   }
 })
 
-export default function ImageLib() {
+function ImageLib() {
+  const imageLibStore = useLocalObservable(() => new ImageLibStore())
+  const { addModalVisible, toggleAddModalVisible } = imageLibStore
+
   const [form] = Form.useForm()
   const mainStore = useMainStore()
 
@@ -148,13 +153,14 @@ export default function ImageLib() {
           `}
           type="primary"
           onClick={() => {
-            console.log(mainStore.router)
+            toggleAddModalVisible(true)
           }}
         >
-          新建图片
+          上传图片
         </Button>
       </div>
       <Table columns={columns} dataSource={data} />
+      <AddImageModal store={imageLibStore} />
     </div>
   )
 }
@@ -162,3 +168,5 @@ export default function ImageLib() {
 ImageLib.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>
 }
+
+export default observer(ImageLib)
