@@ -1,15 +1,8 @@
 import React, { ReactNode, useState } from 'react'
 import { useRouter } from 'next/router'
-import {
-  FolderOpenOutlined,
-  BarsOutlined,
-  SettingOutlined,
-  LoginOutlined,
-  BlockOutlined,
-  UserOutlined,
-} from '@ant-design/icons'
+import { LoginOutlined } from '@ant-design/icons'
 import { css } from '@emotion/react'
-import { Layout, Menu, Button, Dropdown } from 'antd'
+import { Layout, Menu, Button, Modal } from 'antd'
 import Brand from 'components/Brand'
 import { adminRouter as menuItems } from '../constants'
 import Loading from './LoadingForAdmin'
@@ -22,7 +15,7 @@ interface Props {
 
 export default function AdminLayout({ children }: Props) {
   const router = useRouter()
-  const [loading, setLoading] = useState(false)
+  const [logoutModalVisible, setLogoutModalVisible] = useState(false)
 
   return (
     <Layout
@@ -76,6 +69,9 @@ export default function AdminLayout({ children }: Props) {
             type="link"
             shape="circle"
             icon={<LoginOutlined />}
+            onClick={() => {
+              setLogoutModalVisible(true)
+            }}
           />
         </div>
       </Sider>
@@ -98,6 +94,19 @@ export default function AdminLayout({ children }: Props) {
           >
             <Loading />
             {children}
+            <Modal
+              centered
+              title=""
+              open={logoutModalVisible}
+              onOk={() => {}}
+              onCancel={() => {
+                setLogoutModalVisible(false)
+              }}
+              okText="退出登录"
+              cancelText="取消"
+            >
+              您确定要退出登录吗？
+            </Modal>
           </div>
         </Content>
       </Layout>

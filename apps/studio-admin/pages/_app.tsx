@@ -5,7 +5,11 @@ import { AppProps } from 'next/app'
 import { ConfigProvider } from 'antd'
 import locale from 'antd/lib/locale/zh_CN'
 import Head from 'next/head'
+import StoreContext from 'context/StoreContext'
+import { observer, useLocalObservable } from 'mobx-react'
+import MainStore from 'store/index'
 
+import 'normalize.css'
 import 'styles/main.less'
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
@@ -16,8 +20,9 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout
 }
 
-export default function App({ Component, pageProps }: AppPropsWithLayout) {
+function App({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? (page => page)
+  const mainStore = useLocalObservable(() => new MainStore())
 
   return (
     <>
@@ -32,7 +37,11 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
         />
         <link href="/favicon.ico" />
       </Head>
-      <ConfigProvider locale={locale}>{getLayout(<Component {...pageProps} />)}</ConfigProvider>
+      <StoreContext.Provider value={mainStore}>
+        <ConfigProvider locale={locale}>{getLayout(<Component {...pageProps} />)}</ConfigProvider>
+      </StoreContext.Provider>
     </>
   )
 }
+
+export default observer(App)

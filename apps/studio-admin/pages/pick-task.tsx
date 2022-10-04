@@ -27,7 +27,7 @@ const columns: ColumnsType<DataType> = [
     render: text => <a>{text}</a>,
   },
   {
-    title: '客户姓名',
+    title: '客户',
     dataIndex: 'name',
     key: 'name',
     render: text => <a>{text}</a>,
