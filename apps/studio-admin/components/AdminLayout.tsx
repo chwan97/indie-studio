@@ -1,12 +1,13 @@
-import React, { ReactNode, useState } from 'react'
+import React, { ReactNode, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { LoginOutlined } from '@ant-design/icons'
 import { css } from '@emotion/react'
 import { Layout, Menu, Button, Modal } from 'antd'
 import Brand from 'components/Brand'
-import { adminRouter as menuItems } from '../constants/router'
+import { adminRouter as menuItems } from 'constants/router'
 import Loading from './LoadingForAdmin'
-import { useMainStore } from '../hooks'
+import { useMainStore } from 'hooks'
+import { observer } from 'mobx-react'
 
 const { Content, Sider } = Layout
 
@@ -14,10 +15,21 @@ interface Props {
   children: ReactNode
 }
 
-export default function AdminLayout({ children }: Props) {
+function AdminLayout({ children }: Props) {
   const router = useRouter()
   const [logoutModalVisible, setLogoutModalVisible] = useState(false)
   const mainStore = useMainStore()
+  useEffect(() => {
+    mainStore.checkAuth()
+    const handleComplete = (url: string) => {
+      mainStore.checkAuth(url)
+    }
+
+    router.events.on('routeChangeComplete', handleComplete)
+    return () => {
+      router.events.off('routeChangeComplete', handleComplete)
+    }
+  }, [])
 
   return (
     <Layout
@@ -61,7 +73,7 @@ export default function AdminLayout({ children }: Props) {
               white-space: nowrap;
             `}
           >
-            {'获取失败'}
+            {mainStore.userInfo?.user_metadata.name || 'admin-user'}
           </div>
           <Button
             css={css`
@@ -89,6 +101,7 @@ export default function AdminLayout({ children }: Props) {
             style={{
               padding: 24,
               minHeight: 360,
+              minWidth: 1100,
               height: '100%',
               overflowY: 'auto',
               position: 'relative',
@@ -117,3 +130,5 @@ export default function AdminLayout({ children }: Props) {
     </Layout>
   )
 }
+
+export default observer(AdminLayout)

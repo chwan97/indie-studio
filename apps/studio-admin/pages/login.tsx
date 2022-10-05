@@ -8,9 +8,9 @@ import Captcha from 'components/Captcha'
 import Layout from 'components/AuthLayout'
 import LoginStore from 'store/page/LoginStore'
 import { useMainStore } from 'hooks'
-import { useLocalObservable } from 'mobx-react'
+import { observer, useLocalObservable } from 'mobx-react'
 
-export default function Login() {
+function Login() {
   const router = useRouter()
   const mainStore = useMainStore()
   const [form] = Form.useForm()
@@ -116,3 +116,5 @@ export default function Login() {
 Login.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>
 }
+
+export default observer(Login)

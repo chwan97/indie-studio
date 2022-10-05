@@ -30,8 +30,36 @@ export default class Index {
     this.auth = new AuthStore(this)
   }
 
+  init = async () => {
+    await this.getUserInfo()
+  }
+
+  checkAuth = (url?: string) => {
+    if (!this.userInfo) {
+      this.router?.replace('/login')
+    }
+  }
+
+  log = async (content: string) => {
+    const id = this.userInfo?.id
+    if (id && this.userInfo?.email) {
+      const { data, error } = await supabase
+        .from('logs')
+        .insert([{ owner: id, content: `${this.userInfo?.email} ${content}` }])
+      if (error) {
+        console.error(error)
+      }
+    }
+  }
+
   setRouter = (router: NextRouter) => {
     this.router = router
+  }
+
+  setName = (name: string) => {
+    if (this.userInfo) {
+      this.userInfo.user_metadata.name = name
+    }
   }
 
   getUserInfo = async () => {

@@ -43,8 +43,12 @@ export default class AuthStore {
   }
 
   resetPassword = async (email: string, captchaToken: string) => {
+    const location = document.location
+    const { protocol, host } = location
+
     const { error } = await this.main.supabase.auth.api.resetPasswordForEmail(email, {
       captchaToken,
+      redirectTo: `${protocol}${host}/inform/reset-password`,
     })
     console.log(error, 'error')
     if (error) {
@@ -63,7 +67,9 @@ export default class AuthStore {
     }
   }
 
-  register = async (email: string, password: string, captchaToken: string) => {
+  register = async (email: string, password: string, captchaToken: string, name: string) => {
+    const location = document.location
+    const { protocol, host } = location
     const { user, session, error } = await this.main.supabase.auth.signUp(
       {
         email,
@@ -71,6 +77,11 @@ export default class AuthStore {
       },
       {
         captchaToken,
+        redirectTo: `${protocol}${host}/inform/register`,
+        data: {
+          name: name,
+          signFor: 'admin',
+        },
       }
     )
     console.log(user, session, error, 'user, session, error')

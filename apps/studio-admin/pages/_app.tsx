@@ -23,7 +23,7 @@ type AppPropsWithLayout = AppProps & {
 
 message.config({
   top: 200,
-  duration: 5,
+  duration: 3,
   maxCount: 3,
 })
 
@@ -32,6 +32,7 @@ function App({ Component, pageProps }: AppPropsWithLayout) {
   const mainStore = useLocalObservable(() => new MainStore())
   useEffect(() => {
     mainStore.onAuthStateChange()
+    mainStore.init()
   }, [])
   return (
     <>

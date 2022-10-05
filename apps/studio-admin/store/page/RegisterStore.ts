@@ -25,9 +25,9 @@ export default class ImageLibStore {
     this.btnLoading = true
     try {
       const values = await this.form?.validateFields()
-      const { mail, password, captcha } = values
+      const { name, mail, password, captcha } = values
       console.log('register before', mail, password, captcha)
-      await this.mainStore.auth.register(mail, password, captcha)
+      await this.mainStore.auth.register(mail, password, captcha, name)
       this.registerOK = true
     } catch (e) {
     } finally {

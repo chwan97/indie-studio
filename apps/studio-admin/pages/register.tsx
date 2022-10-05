@@ -57,6 +57,21 @@ function Register() {
         `}
       >
         <Form.Item
+          label="名称"
+          name="name"
+          rules={[
+            { required: true, message: '请输入名称用于显示！' },
+            {
+              type: 'string',
+            },
+            {
+              max: 7,
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
           label="邮箱"
           name="mail"
           rules={[

@@ -20,6 +20,7 @@ export default function Testpage() {
         type="primary"
         onClick={() => {
           console.log('mainStore.userInfo', toJS(mainStore.userInfo))
+          console.log('supabase.auth.user()', toJS(supabase.auth.user()))
         }}
       >
         打印用户信息
@@ -36,11 +37,20 @@ export default function Testpage() {
             .from('user_info')
             .select()
             .select('name')
-            .eq('user', id) // Incorrect
+            .eq('user', id)
           console.log('userInfo', data, error)
         }}
       >
         查询userInfo
+      </Button>
+
+      <Button
+        type="primary"
+        onClick={async () => {
+          mainStore.log('测试' + Math.random())
+        }}
+      >
+        插入日志
       </Button>
     </div>
   )

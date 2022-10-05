@@ -35,10 +35,7 @@ export default function PasswordField(props: { forModal?: boolean }) {
                 left: -28px;
                 width: 353px;
               `
-            : css`
-                position: relative;
-                left: -14px;
-              `
+            : css``
         }
         label="密码确认"
         name="rePassword"
