@@ -46,7 +46,13 @@ export default function Login() {
         <Form.Item
           label="邮箱"
           name="mail"
-          rules={[{ required: true, message: '请输入你的邮箱！' }]}
+          rules={[
+            { required: true, message: '请输入你的邮箱！' },
+            {
+              type: 'email',
+              message: '请输入合法的邮箱',
+            },
+          ]}
         >
           <Input />
         </Form.Item>
@@ -85,7 +91,7 @@ export default function Login() {
               width: 100%;
             `}
             onClick={() => {
-              router.push('/reset-password')
+              router.replace('/reset-password')
             }}
           >
             忘记密码?
@@ -96,7 +102,7 @@ export default function Login() {
               width: 100%;
             `}
             onClick={() => {
-              router.push('/register')
+              router.replace('/register')
             }}
           >
             还没有账号？点击注册

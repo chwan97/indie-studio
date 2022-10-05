@@ -1,7 +1,8 @@
 import { Button, Modal, Form, Input } from 'antd'
-import { ReactElement, useState } from 'react'
+import React, { ReactElement, useState } from 'react'
 import Layout from 'components/AdminLayout'
 import { css } from '@emotion/react'
+import PasswordField from '../components/PasswordField'
 
 export default function Setting() {
   const [modalState, setModalState] = useState({
@@ -116,24 +117,7 @@ export default function Setting() {
           <Form.Item name="note" label="旧密码" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="note" label="新密码" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item
-            css={css`
-              position: relative;
-              left: -14px;
-            `}
-            name="note"
-            label="密码确认"
-            rules={[{ required: true }]}
-          >
-            <Input
-              css={css`
-                width: 415px;
-              `}
-            />
-          </Form.Item>
+          <PasswordField forModal />
         </Form>
       </Modal>
     </div>

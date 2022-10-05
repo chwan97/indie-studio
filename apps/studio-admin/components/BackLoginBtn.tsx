@@ -12,7 +12,7 @@ export default function BackLoginBtn() {
         width: 100%;
       `}
       onClick={() => {
-        router.push('/login')
+        router.replace('/login')
       }}
     >
       回到登录

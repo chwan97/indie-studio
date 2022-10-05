@@ -115,19 +115,12 @@ export default function Customer() {
         <div>
           <Form form={form} name="horizontal_login" layout="inline" onFinish={() => {}}>
             <Form.Item name="id" rules={[]}>
-              <Input
-                prefix={<UserOutlined className="site-form-item-icon" />}
-                placeholder="客户编号"
-              />
+              <Input placeholder="客户编号" />
             </Form.Item>
             <Form.Item name="name" rules={[]}>
-              <Input
-                prefix={<LockOutlined className="site-form-item-icon" />}
-                type="password"
-                placeholder="姓名"
-              />
+              <Input placeholder="姓名" />
             </Form.Item>
-            <Form.Item name="创建时间" rules={[]}>
+            <Form.Item name="createTime" label="创建时间" rules={[]}>
               <RangePicker />
             </Form.Item>
             <Form.Item shouldUpdate>

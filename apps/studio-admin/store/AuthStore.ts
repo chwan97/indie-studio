@@ -29,15 +29,39 @@ export default class AuthStore {
     console.log(user, session, error, 'user, session, error')
     if (error && error.message) {
       this.refreshCaptcha()
-      throw new AuthError(getErrorTips(error.message))
+      throw new AuthError(error.message)
     }
   }
 
-  loginFake = async () => {
-    this.refreshCaptcha()
-    message.error('dsadsa')
+  logout = async () => {
+    const { error } = await this.main.supabase.auth.signOut()
+    if (error) {
+      message.info('出现错误，退出登录失败')
+      return
+    }
+    message.info('退出登录成功')
   }
-  resetPassword = () => {}
+
+  resetPassword = async (email: string, captchaToken: string) => {
+    const { error } = await this.main.supabase.auth.api.resetPasswordForEmail(email, {
+      captchaToken,
+    })
+    console.log(error, 'error')
+    if (error) {
+      message.error('字段格式错误或者系统内部错误，请求失败！')
+      this.refreshCaptcha()
+    }
+  }
+
+  updatePassword = async (password: string) => {
+    const { error } = await this.main.supabase.auth.update({
+      password,
+    })
+    console.log(error, 'error')
+    if (error) {
+      throw new AuthError()
+    }
+  }
 
   register = async (email: string, password: string, captchaToken: string) => {
     const { user, session, error } = await this.main.supabase.auth.signUp(
@@ -50,11 +74,9 @@ export default class AuthStore {
       }
     )
     console.log(user, session, error, 'user, session, error')
-    if (error && error.message) {
-      message.error(getErrorTips(error.message))
+    if (error) {
+      message.error('字段格式错误或者系统内部错误，请求失败！')
       this.refreshCaptcha()
-    } else {
-      // this.main.router?.push('/image-lib')
     }
   }
 

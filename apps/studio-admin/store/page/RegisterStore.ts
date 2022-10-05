@@ -10,6 +10,8 @@ export default class ImageLibStore {
 
   btnLoading = false
 
+  registerOK = false
+
   constructor(mainStore: MainStore) {
     makeAutoObservable(this)
     this.mainStore = mainStore
@@ -26,6 +28,7 @@ export default class ImageLibStore {
       const { mail, password, captcha } = values
       console.log('register before', mail, password, captcha)
       await this.mainStore.auth.register(mail, password, captcha)
+      this.registerOK = true
     } catch (e) {
     } finally {
       this.btnLoading = false

@@ -6,6 +6,7 @@ import { Layout, Menu, Button, Modal } from 'antd'
 import Brand from 'components/Brand'
 import { adminRouter as menuItems } from '../constants/router'
 import Loading from './LoadingForAdmin'
+import { useMainStore } from '../hooks'
 
 const { Content, Sider } = Layout
 
@@ -16,6 +17,7 @@ interface Props {
 export default function AdminLayout({ children }: Props) {
   const router = useRouter()
   const [logoutModalVisible, setLogoutModalVisible] = useState(false)
+  const mainStore = useMainStore()
 
   return (
     <Layout
@@ -59,7 +61,7 @@ export default function AdminLayout({ children }: Props) {
               white-space: nowrap;
             `}
           >
-            的撒个哦擦拭是的
+            {'获取失败'}
           </div>
           <Button
             css={css`
@@ -98,7 +100,9 @@ export default function AdminLayout({ children }: Props) {
               centered
               title=""
               open={logoutModalVisible}
-              onOk={() => {}}
+              onOk={() => {
+                mainStore.auth.logout()
+              }}
               onCancel={() => {
                 setLogoutModalVisible(false)
               }}

@@ -31,7 +31,8 @@ export default class ImageLibStore {
       await this.mainStore.auth.login(mail, password, captcha)
     } catch (e: any) {
       if (e instanceof AuthError) {
-        message.error(e!.message as string)
+        console.log('e!.message', e!.message)
+        message.error('账号密码错误')
         this.form?.resetFields(['captcha'])
       }
     } finally {

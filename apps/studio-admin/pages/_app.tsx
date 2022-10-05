@@ -30,7 +30,9 @@ message.config({
 function App({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? (page => page)
   const mainStore = useLocalObservable(() => new MainStore())
-
+  useEffect(() => {
+    mainStore.onAuthStateChange()
+  }, [])
   return (
     <>
       <Head>

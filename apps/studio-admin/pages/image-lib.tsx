@@ -116,19 +116,12 @@ function ImageLib() {
         <div>
           <Form form={form} name="horizontal_login" layout="inline" onFinish={() => {}}>
             <Form.Item name="id" rules={[]}>
-              <Input
-                prefix={<UserOutlined className="site-form-item-icon" />}
-                placeholder="图片编号"
-              />
+              <Input placeholder="图片编号" />
             </Form.Item>
             <Form.Item name="name" rules={[]}>
-              <Input
-                prefix={<LockOutlined className="site-form-item-icon" />}
-                type="password"
-                placeholder="图片名称"
-              />
+              <Input placeholder="图片名称" />
             </Form.Item>
-            <Form.Item name="创建时间" rules={[]}>
+            <Form.Item name="createTime" label="创建时间" rules={[]}>
               <RangePicker />
             </Form.Item>
             <Form.Item shouldUpdate>

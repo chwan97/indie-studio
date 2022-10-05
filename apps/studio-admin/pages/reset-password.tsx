@@ -1,19 +1,39 @@
-import { createClient } from '@supabase/supabase-js'
-import React, { ReactElement } from 'react'
-import { Button, Checkbox, Form, Input } from 'antd'
+import React, { ReactElement, useState } from 'react'
+import { Button, Form, Input, message } from 'antd'
 import { css } from '@emotion/react'
 
 import BackLoginBtn from 'components/BackLoginBtn'
 import Captcha from 'components/Captcha'
 import Layout from 'components/AuthLayout'
+import { useMainStore } from 'hooks'
+import { useRouter } from 'next/router'
 
 export default function ResetPassword() {
-  const onFinish = (values: any) => {
-    console.log('Success:', values)
-  }
+  const mainStore = useMainStore()
+  const [form] = Form.useForm()
+  const [success, setSuccess] = useState(false)
+  const router = useRouter()
 
-  const onFinishFailed = (errorInfo: any) => {
-    console.log('Failed:', errorInfo)
+  if (success) {
+    return (
+      <div
+        css={css`
+          margin-top: 40px;
+          display: flex;
+          justify-content: center;
+        `}
+      >
+        <div
+          css={css`
+            width: 325px;
+            text-align: center;
+          `}
+        >
+          重置成功, 登录邮箱[{form.getFieldValue('mail')}]<br />
+          查看收信箱重置邮件,点击邮件内链接重设密码!
+        </div>
+      </div>
+    )
   }
   return (
     <div
@@ -25,9 +45,7 @@ export default function ResetPassword() {
     >
       <Form
         name="basic"
-        initialValues={{ remember: true }}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
+        form={form}
         autoComplete="off"
         css={css`
           width: 325px;
@@ -35,8 +53,14 @@ export default function ResetPassword() {
       >
         <Form.Item
           label="邮箱"
-          name="username"
-          rules={[{ required: true, message: '请输入你的邮箱！' }]}
+          name="mail"
+          rules={[
+            { required: true, message: '请输入你的邮箱！' },
+            {
+              type: 'email',
+              message: '请输入合法的邮箱',
+            },
+          ]}
         >
           <Input />
         </Form.Item>
@@ -54,6 +78,16 @@ export default function ResetPassword() {
                 width: 100%;
                 margin-top: 24px;
               `}
+              onClick={async () => {
+                try {
+                  const { mail, captcha } = await form.validateFields()
+                  await mainStore.auth.resetPassword(mail, captcha)
+                  setSuccess(true)
+                } catch (e) {
+                  message.error('字段格式错误或者系统内部错误，请求失败！')
+                  return
+                }
+              }}
             >
               发送重置邮件
             </Button>
