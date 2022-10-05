@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react'
+import React, { ReactElement, useEffect } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import { Button, Checkbox, Form, Input } from 'antd'
 import { css } from '@emotion/react'
@@ -6,11 +6,18 @@ import { useRouter } from 'next/router'
 
 import Captcha from 'components/Captcha'
 import Layout from 'components/AuthLayout'
-import { useMainStore } from '../hooks'
+import LoginStore from 'store/page/LoginStore'
+import { useMainStore } from 'hooks'
+import { useLocalObservable } from 'mobx-react'
 
 export default function Login() {
   const router = useRouter()
   const mainStore = useMainStore()
+  const [form] = Form.useForm()
+  const loginStore = useLocalObservable(() => new LoginStore(mainStore))
+  useEffect(() => {
+    loginStore.setForm(form)
+  }, [form])
 
   const onFinish = (values: any) => {
     console.log('Success:', values)
@@ -29,15 +36,8 @@ export default function Login() {
       `}
     >
       <Form
-        name="basic"
-        initialValues={{ remember: true }}
-        onFinish={values => {
-          console.log('values', values)
-          console.log('mainStore.auth', mainStore.auth)
-          const { captcha, password, username } = values
-          mainStore.auth.login(username, password, captcha)
-        }}
-        onFinishFailed={onFinishFailed}
+        name="login"
+        form={form}
         autoComplete="off"
         css={css`
           width: 325px;
@@ -45,7 +45,7 @@ export default function Login() {
       >
         <Form.Item
           label="邮箱"
-          name="username"
+          name="mail"
           rules={[{ required: true, message: '请输入你的邮箱！' }]}
         >
           <Input />
@@ -58,11 +58,7 @@ export default function Login() {
         >
           <Input.Password />
         </Form.Item>
-        <Captcha
-          onVerify={(token, ekey) => {
-            console.log(token, ekey)
-          }}
-        />
+        <Captcha />
 
         <div
           css={css`
@@ -72,11 +68,12 @@ export default function Login() {
           <Form.Item>
             <Button
               type="primary"
-              htmlType="submit"
               css={css`
                 width: 100%;
                 margin-top: 24px;
               `}
+              onClick={loginStore.login}
+              loading={loginStore.btnLoading}
             >
               登录
             </Button>

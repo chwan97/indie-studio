@@ -7,11 +7,6 @@ import BackLoginBtn from 'components/BackLoginBtn'
 import Captcha from 'components/Captcha'
 import Layout from 'components/AuthLayout'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-const supabase = createClient(supabaseUrl!, supabaseAnonKey!)
-
 export default function ResetPassword() {
   const onFinish = (values: any) => {
     console.log('Success:', values)
@@ -45,11 +40,7 @@ export default function ResetPassword() {
         >
           <Input />
         </Form.Item>
-        <Captcha
-          onVerify={(token, ekey) => {
-            console.log(token, ekey)
-          }}
-        />
+        <Captcha />
         <div
           css={css`
             text-align: center;

@@ -4,7 +4,7 @@ import { observer, useLocalObservable } from 'mobx-react'
 import type { NextPage } from 'next'
 import { AppProps } from 'next/app'
 import Head from 'next/head'
-import { ConfigProvider } from 'antd'
+import { ConfigProvider, message } from 'antd'
 import locale from 'antd/lib/locale/zh_CN'
 import StoreContext from 'context/StoreContext'
 import MainStore from 'store/index'
@@ -20,6 +20,12 @@ export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout
 }
+
+message.config({
+  top: 200,
+  duration: 5,
+  maxCount: 3,
+})
 
 function App({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? (page => page)

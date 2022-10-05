@@ -4,7 +4,7 @@ import { LoginOutlined } from '@ant-design/icons'
 import { css } from '@emotion/react'
 import { Layout, Menu, Button, Modal } from 'antd'
 import Brand from 'components/Brand'
-import { adminRouter as menuItems } from '../constants'
+import { adminRouter as menuItems } from '../constants/router'
 import Loading from './LoadingForAdmin'
 
 const { Content, Sider } = Layout

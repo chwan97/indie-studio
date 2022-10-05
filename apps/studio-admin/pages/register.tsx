@@ -6,22 +6,20 @@ import HCaptcha from '@hcaptcha/react-hcaptcha'
 import Brand from '../components/Brand'
 import BackLoginBtn from '../components/BackLoginBtn'
 import Captcha from '../components/Captcha'
-import React, { ReactElement } from 'react'
+import React, { ReactElement, useEffect } from 'react'
 import Layout from '../components/AuthLayout'
+import { useMainStore } from '../hooks'
+import { observer, useLocalObservable } from 'mobx-react'
+import RegisterStore from 'store/page/RegisterStore'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+function Register() {
+  const mainStore = useMainStore()
+  const [form] = Form.useForm()
+  const registerStore = useLocalObservable(() => new RegisterStore(mainStore))
+  useEffect(() => {
+    registerStore.setForm(form)
+  }, [form])
 
-const supabase = createClient(supabaseUrl!, supabaseAnonKey!)
-
-export default function Register() {
-  const onFinish = (values: any) => {
-    console.log('Success:', values)
-  }
-
-  const onFinishFailed = (errorInfo: any) => {
-    console.log('Failed:', errorInfo)
-  }
   return (
     <div
       css={css`
@@ -31,10 +29,9 @@ export default function Register() {
       `}
     >
       <Form
-        name="basic"
+        form={form}
+        name="register"
         initialValues={{ remember: true }}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
         autoComplete="off"
         css={css`
           width: 325px;
@@ -42,7 +39,7 @@ export default function Register() {
       >
         <Form.Item
           label="邮箱"
-          name="username"
+          name="mail"
           rules={[{ required: true, message: '请输入你的邮箱！' }]}
         >
           <Input />
@@ -62,16 +59,12 @@ export default function Register() {
             width: 353px;
           `}
           label="密码确认"
-          name="password"
-          rules={[{ required: true, message: '请输入你的密码' }]}
+          name="rePassword"
+          rules={[{ required: true, message: '请再次输入你的密码' }]}
         >
           <Input.Password />
         </Form.Item>
-        <Captcha
-          onVerify={(token, ekey) => {
-            console.log(token, ekey)
-          }}
-        />
+        <Captcha />
         <div
           css={css`
             text-align: center;
@@ -80,11 +73,12 @@ export default function Register() {
           <Form.Item>
             <Button
               type="primary"
-              htmlType="submit"
               css={css`
                 width: 100%;
                 margin-top: 24px;
               `}
+              loading={registerStore.btnLoading}
+              onClick={registerStore.register}
             >
               注册
             </Button>
@@ -99,3 +93,4 @@ export default function Register() {
 Register.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>
 }
+export default observer(Register)

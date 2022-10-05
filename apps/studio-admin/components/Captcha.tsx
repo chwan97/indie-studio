@@ -31,9 +31,7 @@ function WrapperForItem(props: any) {
   )
 }
 
-export default function Captcha(props: { onVerify: (token: string, ekey: string) => any }) {
-  const { onVerify } = props
-
+export default function Captcha() {
   return (
     <div
       css={css`
