@@ -19,11 +19,11 @@ const beforeUpload = (file: RcFile) => {
   if (!isJpgOrPng) {
     message.error('只支持 PNG、IMG格式!')
   }
-  const isLt3M = file.size / 1024 / 1024 < 3
-  if (!isLt3M) {
-    message.error('图片大小不能超过 3MB!')
+  const isLt100K = file.size / 100 / 1024 < 1
+  if (!isLt100K) {
+    message.error('图片大小不能超过 100K!')
   }
-  return isJpgOrPng && isLt3M
+  return isJpgOrPng && isLt100K
 }
 
 function AddImageModal(props: { store: ImageLibStore }) {
@@ -35,17 +35,18 @@ function AddImageModal(props: { store: ImageLibStore }) {
   const [form] = Form.useForm()
 
   const handleChange: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile>) => {
-    console.log(info)
+    console.log('handleChange', info)
     if (info.file.status === 'uploading') {
       setLoading(true)
       return
     }
     if (info.file.status === 'done') {
-      // Get this url from response in real world.
       getBase64(info.file.originFileObj as RcFile, url => {
         setLoading(false)
         toggleAddModalVisible(false)
         message.info('新的图片创建成功!')
+        imageLibStore.getTotal()
+        imageLibStore.changePage(1)
       })
     }
   }
@@ -59,10 +60,10 @@ function AddImageModal(props: { store: ImageLibStore }) {
 
   return (
     <Modal
+      destroyOnClose
       transitionName=""
       maskTransitionName=""
       title="上传图片"
-      destroyOnClose
       open={addModalVisible}
       footer={
         <Button
@@ -91,7 +92,7 @@ function AddImageModal(props: { store: ImageLibStore }) {
           name="image-upload"
           listType="picture-card"
           showUploadList={false}
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+          customRequest={imageLibStore.customRequest}
           beforeUpload={beforeUpload}
           onChange={handleChange}
         >

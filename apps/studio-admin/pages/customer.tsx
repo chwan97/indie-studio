@@ -6,8 +6,8 @@ import AddCustomerModal from 'components/AddCustomerModal'
 import type { ColumnsType } from 'antd/es/table'
 import React from 'react'
 import { css } from '@emotion/react'
-import { useLocalObservable } from 'mobx-react'
-import CustomerStore from '../store/page/CustomerStore'
+import { observer, useLocalObservable } from 'mobx-react'
+import CustomerStore from 'store/page/CustomerStore'
 
 const { RangePicker } = DatePicker
 
@@ -21,67 +21,90 @@ interface DataType {
   tags: string[]
 }
 
-const columns: ColumnsType<DataType> = [
-  {
-    title: '编号',
-    dataIndex: 'id',
-    key: 'id',
-    render: text => <a>{text}</a>,
-  },
-  {
-    title: '客户姓名',
-    dataIndex: 'name',
-    key: 'name',
-    render: text => <a>{text}</a>,
-  },
-  {
-    title: '邮箱地址',
-    dataIndex: 'age',
-    key: 'age',
-  },
-  {
-    title: '联系地址',
-    dataIndex: 'age',
-    key: 'age',
-  },
-  {
-    title: '联系方式',
-    dataIndex: 'age',
-    key: 'age',
-  },
-  {
-    title: '创建日期',
-    key: 'tags',
-    dataIndex: 'tags',
-    render: (_, { tags }) => (
-      <>
-        {tags.map(tag => {
-          let color = tag.length > 5 ? 'geekblue' : 'green'
-          if (tag === 'loser') {
-            color = 'volcano'
-          }
-          return (
-            <Tag color={color} key={tag}>
-              {tag.toUpperCase()}
-            </Tag>
-          )
-        })}
-      </>
-    ),
-  },
-  {
-    title: '操作',
-    key: 'action',
-    render: (_, record) => (
-      <Space size="middle">
-        <a>编辑</a>
-        <a>删除</a>
-      </Space>
-    ),
-  },
-]
+const columns: (customerStore: CustomerStore) => ColumnsType<DataType> = customerStore => {
+  const {} = customerStore
+  return [
+    {
+      title: '编号',
+      dataIndex: 'id',
+      key: 'id',
+      render: text => <a>{text}</a>,
+    },
+    {
+      title: '客户姓名',
+      dataIndex: 'name',
+      key: 'name',
+      render: text => <a>{text}</a>,
+    },
+    {
+      title: '邮箱地址',
+      dataIndex: 'age',
+      key: 'age',
+    },
+    {
+      title: '联系地址',
+      dataIndex: 'age',
+      key: 'age',
+    },
+    {
+      title: '联系方式',
+      dataIndex: 'age',
+      key: 'age',
+    },
+    {
+      title: '创建日期',
+      key: 'tags',
+      dataIndex: 'tags',
+      render: (_, { tags }) => (
+        <>
+          {tags.map(tag => {
+            let color = tag.length > 5 ? 'geekblue' : 'green'
+            if (tag === 'loser') {
+              color = 'volcano'
+            }
+            return (
+              <Tag color={color} key={tag}>
+                {tag.toUpperCase()}
+              </Tag>
+            )
+          })}
+        </>
+      ),
+    },
+    {
+      title: '操作',
+      key: 'action',
+      render: (_, record) => (
+        <>
+          <Button
+            type="link"
+            css={css`
+              padding: 0 5px;
+            `}
+            onClick={() => {
+              customerStore.toggleEditModal(record)
+            }}
+          >
+            编辑
+          </Button>
+          <Button
+            css={css`
+              padding: 0 5px;
+            `}
+            type="link"
+            onClick={() => {
+              customerStore.deleted(record)
+            }}
+          >
+            删除
+          </Button>
+        </>
+      ),
+    },
+  ]
+}
 
-const data: DataType[] = new Array(75).fill('').map((_, index) => {
+const data: DataType[] = new Array(1).fill('').map((_, index) => {
   return {
     key: String(index),
     id: '212d3215123',
@@ -93,10 +116,10 @@ const data: DataType[] = new Array(75).fill('').map((_, index) => {
   }
 })
 
-export default function Customer() {
-  const [form] = Form.useForm()
+function Customer() {
+  const [searchForm] = Form.useForm()
   const customerStore = useLocalObservable(() => {
-    return new CustomerStore()
+    return new CustomerStore(searchForm)
   })
   const { addModalVisible, toggleAddModalVisible } = customerStore
 
@@ -113,7 +136,7 @@ export default function Customer() {
         `}
       >
         <div>
-          <Form form={form} name="horizontal_login" layout="inline" onFinish={() => {}}>
+          <Form form={searchForm} name="searchForm" layout="inline" onFinish={() => {}}>
             <Form.Item name="id" rules={[]}>
               <Input placeholder="客户编号" />
             </Form.Item>
@@ -132,7 +155,12 @@ export default function Customer() {
             </Form.Item>
             <Form.Item shouldUpdate>
               {() => (
-                <Button type="primary" htmlType="submit" disabled={false}>
+                <Button
+                  disabled={false}
+                  onClick={() => {
+                    searchForm.resetFields()
+                  }}
+                >
                   重置
                 </Button>
               )}
@@ -145,13 +173,13 @@ export default function Customer() {
           `}
           type="primary"
           onClick={() => {
-            toggleAddModalVisible(true)
+            customerStore.toggleAddModal()
           }}
         >
           创建客户信息
         </Button>
       </div>
-      <Table columns={columns} dataSource={data} />
+      <Table columns={columns(customerStore)} dataSource={data} />
       <AddCustomerModal store={customerStore} />
     </div>
   )
@@ -160,3 +188,5 @@ export default function Customer() {
 Customer.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>
 }
+
+export default observer(Customer)

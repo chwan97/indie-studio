@@ -11,3 +11,9 @@ export function getErrorTips(rawMsg: string) {
 
   return res
 }
+
+export function formatSize(size: number) {
+  if (size < 1024) return `${size} B`
+  if (size < 1024 * 1024) return `${Math.floor(size / 1024)} KB`
+  return `${Math.floor(size / (1024 * 1024))} MB`
+}

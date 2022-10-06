@@ -4,25 +4,29 @@ import { message, Form, Upload, Modal, Button, Input } from 'antd'
 import type { UploadChangeParam } from 'antd/es/upload'
 import { observer } from 'mobx-react'
 import { css } from '@emotion/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import CustomerStore from 'store/page/CustomerStore'
+import ModalMode from 'constants/ModalMode'
 
 function AddCustomerModal(props: { store: CustomerStore }) {
   const { store: customerStore } = props
 
-  const { addModalVisible, toggleAddModalVisible } = customerStore
+  const { modelMode, addModalVisible } = customerStore
   const [form] = Form.useForm()
-
+  const isAdd = ModalMode.add === modelMode
+  useEffect(() => {
+    customerStore.setForm(form)
+  }, [form])
   return (
     <Modal
-      title="创建客户信息"
+      title={`${isAdd ? '创建' : '编辑'}客户信息`}
       open={addModalVisible}
-      onOk={() => {
-        form.validateFields()
+      onOk={async () => {
+        await customerStore.add()
       }}
       onCancel={() => {
-        toggleAddModalVisible(false)
+        customerStore.closeModal()
       }}
       okText="确认"
       cancelText="取消"
@@ -36,16 +40,60 @@ function AddCustomerModal(props: { store: CustomerStore }) {
         name="customerForm"
         onFinish={() => {}}
       >
-        <Form.Item name="name" label="客户姓名" rules={[{ required: true }]}>
+        <Form.Item
+          name="name"
+          label="客户姓名"
+          rules={[
+            { required: true },
+            {
+              type: 'string',
+            },
+            {
+              max: 20,
+            },
+          ]}
+        >
           <Input />
         </Form.Item>
-        <Form.Item name="mail" label="邮箱地址" rules={[{ required: true }]}>
+        <Form.Item
+          name="mail"
+          label="邮箱地址"
+          rules={[
+            { required: true },
+            {
+              type: 'email',
+              message: '请输入合法的邮箱',
+            },
+          ]}
+        >
           <Input />
         </Form.Item>
-        <Form.Item name="address" label="联系地址">
+        <Form.Item
+          name="address"
+          label="联系地址"
+          rules={[
+            {
+              type: 'string',
+            },
+            {
+              max: 100,
+            },
+          ]}
+        >
           <Input.TextArea />
         </Form.Item>
-        <Form.Item name="contact" label="联系方式">
+        <Form.Item
+          name="contact"
+          label="联系方式"
+          rules={[
+            {
+              type: 'string',
+            },
+            {
+              max: 50,
+            },
+          ]}
+        >
           <Input />
         </Form.Item>
       </Form>

@@ -1,6 +1,6 @@
-import { ReactElement } from 'react'
+import { ReactElement, useEffect } from 'react'
 import { observer, useLocalObservable } from 'mobx-react'
-import { Space, Table, Tag, Button, Form, Input, DatePicker } from 'antd'
+import { Space, Table, Tag, Button, Form, Image, DatePicker, Pagination } from 'antd'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 
 import Layout from 'components/AdminLayout'
@@ -9,7 +9,9 @@ import type { ColumnsType } from 'antd/es/table'
 import React from 'react'
 import { css } from '@emotion/react'
 import { useMainStore } from 'hooks'
-import ImageLibStore from '../store/page/ImageLibStore'
+import ImageLibStore, { PAGE_SIZE } from '../store/page/ImageLibStore'
+import dayjs from 'dayjs'
+import { formatSize } from '../utils'
 
 const { RangePicker } = DatePicker
 
@@ -23,123 +25,116 @@ interface DataType {
   tags: string[]
 }
 
-const columns: ColumnsType<DataType> = [
-  {
-    title: '编号',
-    dataIndex: 'id',
-    key: 'id',
-    render: text => <a>{text}</a>,
-  },
-  {
-    title: '名称',
-    dataIndex: 'name',
-    key: 'name',
-    render: text => <a>{text}</a>,
-  },
-  {
-    title: '预览',
-    dataIndex: 'address',
-    key: 'address',
-  },
-  {
-    title: '类型',
-    dataIndex: 'age',
-    key: 'age',
-  },
-  {
-    title: '大小',
-    dataIndex: 'status',
-    key: 'status',
-  },
-  {
-    title: '创建日期',
-    key: 'tags',
-    dataIndex: 'tags',
-    render: (_, { tags }) => (
-      <>
-        {tags.map(tag => {
-          let color = tag.length > 5 ? 'geekblue' : 'green'
-          if (tag === 'loser') {
-            color = 'volcano'
-          }
-          return (
-            <Tag color={color} key={tag}>
-              {tag.toUpperCase()}
-            </Tag>
-          )
-        })}
-      </>
-    ),
-  },
-  {
-    title: '操作',
-    key: 'action',
-    render: (_, record) => (
-      <Space size="middle">
-        <a>删除</a>
-      </Space>
-    ),
-  },
-]
+const columns: (option: any) => ColumnsType<DataType> = option => {
+  const { deleteImage } = option
+  return [
+    {
+      title: '编号',
+      dataIndex: 'id',
+      key: 'id',
+      width: 300,
+      render: text => <a>{text}</a>,
+    },
+    {
+      title: '名称',
+      dataIndex: 'file_name',
+      key: 'file_name',
+      render: text => <a>{text}</a>,
+    },
+    {
+      title: '预览',
+      dataIndex: 'src',
+      key: 'src',
+      render: src => (
+        <div
+          css={css`
+            width: 85px;
+            height: 85px;
+            border: 1px solid #eaeaea;
+            border-radius: 4px;
+            position: relative;
+            margin-bottom: 5px;
+            margin-right: 5px;
 
-const data: DataType[] = new Array(75).fill('').map((_, index) => {
-  return {
-    key: String(index),
-    id: '212d3215123',
-    name: 'John Brown',
-    age: 32,
-    address: '12',
-    status: '未选择',
-    tags: ['nice', 'developer'],
-  }
-})
+            .ant-image {
+              width: 85px;
+              height: 85px;
+            }
+          `}
+        >
+          <Image
+            css={css`
+              max-width: 100%;
+              max-height: 100%;
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              width: unset;
+              height: unset;
+              vertical-align: unset;
+            `}
+            src={src}
+          ></Image>
+        </div>
+      ),
+    },
+    {
+      title: '类型',
+      dataIndex: 'type',
+      key: 'type',
+    },
+    {
+      title: '大小',
+      dataIndex: 'size',
+      key: 'size',
+      render: (size, { tags }) => <>{size && formatSize(size)}</>,
+    },
+    {
+      title: '创建日期',
+      key: 'created_at',
+      dataIndex: 'created_at',
+      render: (created_at, { tags }) => (
+        <>{created_at && dayjs(created_at).format('YYYY-MM-DD HH:mm:ss')}</>
+      ),
+    },
+    {
+      title: '操作',
+      key: 'action',
+      render: (_, record) => (
+        <Space size="middle">
+          <Button
+            type="link"
+            onClick={() => {
+              if (record?.id) {
+                deleteImage(record?.id)
+              }
+            }}
+          >
+            删除
+          </Button>
+        </Space>
+      ),
+    },
+  ]
+}
 
 function ImageLib() {
-  const imageLibStore = useLocalObservable(() => new ImageLibStore())
-  const { addModalVisible, toggleAddModalVisible } = imageLibStore
+  const mainStore = useMainStore()
+  const imageLibStore = useLocalObservable(() => new ImageLibStore(mainStore))
+  const { deleteImage, pageNum, total, data, toggleAddModalVisible, changePage } = imageLibStore
 
   const [form] = Form.useForm()
-  const mainStore = useMainStore()
-
+  useEffect(() => {
+    imageLibStore.init()
+  }, [])
   return (
     <div>
       <div
         css={css`
           padding-bottom: 15px;
-          display: flex;
-
-          .ant-form-inline .ant-form-item-with-help {
-            margin-bottom: 0;
-          }
         `}
       >
-        <div>
-          <Form form={form} name="horizontal_login" layout="inline" onFinish={() => {}}>
-            <Form.Item name="id" rules={[]}>
-              <Input placeholder="图片编号" />
-            </Form.Item>
-            <Form.Item name="name" rules={[]}>
-              <Input placeholder="图片名称" />
-            </Form.Item>
-            <Form.Item name="createTime" label="创建时间" rules={[]}>
-              <RangePicker />
-            </Form.Item>
-            <Form.Item shouldUpdate>
-              {() => (
-                <Button type="primary" htmlType="submit" disabled={false}>
-                  搜索
-                </Button>
-              )}
-            </Form.Item>
-            <Form.Item shouldUpdate>
-              {() => (
-                <Button type="primary" htmlType="submit" disabled={false}>
-                  重置
-                </Button>
-              )}
-            </Form.Item>
-          </Form>
-        </div>
         <Button
           css={css`
             margin-left: auto;
@@ -152,7 +147,30 @@ function ImageLib() {
           上传图片
         </Button>
       </div>
-      <Table columns={columns} dataSource={data} />
+      <Table
+        rowKey="id"
+        columns={columns({ deleteImage })}
+        dataSource={data}
+        pagination={{
+          current: pageNum,
+          pageSize: PAGE_SIZE,
+          total: total,
+          showTotal: total => (
+            <div
+              css={css`
+                font-size: 16px;
+                line-height: 32px;
+                margin-right: 8px;
+              `}
+            >
+              共{total}项
+            </div>
+          ),
+          onChange: (page, pageSize) => {
+            changePage(page)
+          },
+        }}
+      />
       <AddImageModal store={imageLibStore} />
     </div>
   )
