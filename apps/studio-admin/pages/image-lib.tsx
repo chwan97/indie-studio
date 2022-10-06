@@ -33,13 +33,11 @@ const columns: (option: any) => ColumnsType<DataType> = option => {
       dataIndex: 'id',
       key: 'id',
       width: 300,
-      render: text => <a>{text}</a>,
     },
     {
       title: '名称',
       dataIndex: 'file_name',
       key: 'file_name',
-      render: text => <a>{text}</a>,
     },
     {
       title: '预览',
@@ -122,7 +120,8 @@ const columns: (option: any) => ColumnsType<DataType> = option => {
 function ImageLib() {
   const mainStore = useMainStore()
   const imageLibStore = useLocalObservable(() => new ImageLibStore(mainStore))
-  const { deleteImage, pageNum, total, data, toggleAddModalVisible, changePage } = imageLibStore
+  const { loading, pageNum, total, data, toggleAddModalVisible, changePage, deleteImage } =
+    imageLibStore
 
   const [form] = Form.useForm()
   useEffect(() => {
@@ -151,6 +150,7 @@ function ImageLib() {
         rowKey="id"
         columns={columns({ deleteImage })}
         dataSource={data}
+        loading={loading}
         pagination={{
           current: pageNum,
           pageSize: PAGE_SIZE,

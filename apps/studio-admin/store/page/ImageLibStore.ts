@@ -14,6 +14,8 @@ export default class ImageLibStore {
 
   data: any[] = []
 
+  loading = false
+
   main: Main
 
   constructor(main: Main) {
@@ -52,35 +54,39 @@ export default class ImageLibStore {
     if (!this.main.userInfo?.id) {
       return
     }
-    const supabase = this.main.supabase
-    const id = this.main.userInfo?.id
-    const base = (page - 1) * PAGE_SIZE
+    try {
+      this.loading = true
+      const supabase = this.main.supabase
+      const id = this.main.userInfo?.id
+      const base = (page - 1) * PAGE_SIZE
 
-    const { data: dBase, error } = await supabase
-      .from('images')
-      .select('id, file_name, size, src, type, created_at')
-      .eq('owner', id)
-      .eq('deleted', false)
-      .order('created_at', { ascending: false })
-      .range(base, base + PAGE_SIZE)
+      const { data: dBase, error } = await supabase
+        .from('images')
+        .select('id, file_name, size, src, type, created_at')
+        .eq('owner', id)
+        .eq('deleted', false)
+        .order('created_at', { ascending: false })
+        .range(base, base + PAGE_SIZE)
 
-    if (!error) {
-      const keys = dBase.map(item => item.src)
-      if (keys[0]) {
-        const { data, error } = await supabase.storage
-          .from('image-library')
-          .createSignedUrls(keys, 120)
-        console.log('data', data)
-        if (data && !error) {
-          dBase.forEach((item, index) => {
-            item.src = data[index].signedURL
-          })
+      if (!error) {
+        const keys = dBase.map(item => item.src)
+        if (keys[0]) {
+          const { data, error } = await supabase.storage
+            .from('image-library')
+            .createSignedUrls(keys, 120)
+          console.log('data', data)
+          if (data && !error) {
+            dBase.forEach((item, index) => {
+              item.src = data[index].signedURL
+            })
+          }
         }
+        this.data = dBase
+      } else {
+        message.error(`列表获取失败!${error.message}`)
       }
-
-      this.data = dBase
-    } else {
-      message.error(`列表获取失败!${error.message}`)
+    } finally {
+      this.loading = false
     }
   }
 

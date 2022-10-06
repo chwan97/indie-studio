@@ -4,7 +4,7 @@ import { css } from '@emotion/react'
 import { useMainStore } from 'hooks'
 import { toJS } from 'mobx'
 
-export default function Testpage() {
+export default function TestPage() {
   const mainStore = useMainStore()
   const supabase = mainStore.supabase
   return (

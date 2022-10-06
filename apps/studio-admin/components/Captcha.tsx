@@ -2,7 +2,7 @@ import { css } from '@emotion/react'
 import { Form } from 'antd'
 import { useEffect, useRef } from 'react'
 import HCaptcha from '@hcaptcha/react-hcaptcha'
-import { useMainStore } from '../hooks'
+import { useMainStore } from 'hooks'
 
 function WrapperForItem(props: any) {
   const { onChange } = props

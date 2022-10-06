@@ -1,4 +1,4 @@
-import { ReactElement } from 'react'
+import { ReactElement, useEffect } from 'react'
 import Layout from 'components/AdminLayout'
 import { Space, Table, Tag, Button, Form, Input, DatePicker } from 'antd'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
@@ -7,7 +7,9 @@ import type { ColumnsType } from 'antd/es/table'
 import React from 'react'
 import { css } from '@emotion/react'
 import { observer, useLocalObservable } from 'mobx-react'
-import CustomerStore from 'store/page/CustomerStore'
+import CustomerStore, { PAGE_SIZE } from 'store/page/CustomerStore'
+import { useMainStore } from 'hooks'
+import dayjs from 'dayjs'
 
 const { RangePicker } = DatePicker
 
@@ -28,48 +30,33 @@ const columns: (customerStore: CustomerStore) => ColumnsType<DataType> = custome
       title: '编号',
       dataIndex: 'id',
       key: 'id',
-      render: text => <a>{text}</a>,
+      width: 350,
     },
     {
       title: '客户姓名',
       dataIndex: 'name',
       key: 'name',
-      render: text => <a>{text}</a>,
     },
     {
       title: '邮箱地址',
-      dataIndex: 'age',
-      key: 'age',
+      dataIndex: 'mail',
+      key: 'mail',
     },
     {
       title: '联系地址',
-      dataIndex: 'age',
-      key: 'age',
+      dataIndex: 'address',
+      key: 'address',
     },
     {
       title: '联系方式',
-      dataIndex: 'age',
-      key: 'age',
+      dataIndex: 'contact',
+      key: 'contact',
     },
     {
       title: '创建日期',
-      key: 'tags',
-      dataIndex: 'tags',
-      render: (_, { tags }) => (
-        <>
-          {tags.map(tag => {
-            let color = tag.length > 5 ? 'geekblue' : 'green'
-            if (tag === 'loser') {
-              color = 'volcano'
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            )
-          })}
-        </>
-      ),
+      key: 'created_at',
+      dataIndex: 'created_at',
+      render: created_at => <>{created_at && dayjs(created_at).format('YYYY-MM-DD HH:mm:ss')}</>,
     },
     {
       title: '操作',
@@ -104,24 +91,17 @@ const columns: (customerStore: CustomerStore) => ColumnsType<DataType> = custome
   ]
 }
 
-const data: DataType[] = new Array(1).fill('').map((_, index) => {
-  return {
-    key: String(index),
-    id: '212d3215123',
-    name: 'John Brown',
-    age: 32,
-    address: '12',
-    status: '未选择',
-    tags: ['nice', 'developer'],
-  }
-})
-
 function Customer() {
   const [searchForm] = Form.useForm()
+  const mainStore = useMainStore()
   const customerStore = useLocalObservable(() => {
-    return new CustomerStore(searchForm)
+    return new CustomerStore(mainStore, searchForm)
   })
-  const { addModalVisible, toggleAddModalVisible } = customerStore
+  const { loading, pageNum, total, data, changePage } = customerStore
+
+  useEffect(() => {
+    customerStore.init()
+  }, [])
 
   return (
     <div>
@@ -135,7 +115,12 @@ function Customer() {
           }
         `}
       >
-        <div>
+        {/* TODO 筛选 */}
+        <div
+          css={css`
+            display: none;
+          `}
+        >
           <Form form={searchForm} name="searchForm" layout="inline" onFinish={() => {}}>
             <Form.Item name="id" rules={[]}>
               <Input placeholder="客户编号" />
@@ -169,7 +154,7 @@ function Customer() {
         </div>
         <Button
           css={css`
-            margin-left: auto;
+            margin-right: auto;
           `}
           type="primary"
           onClick={() => {
@@ -179,7 +164,31 @@ function Customer() {
           创建客户信息
         </Button>
       </div>
-      <Table columns={columns(customerStore)} dataSource={data} />
+      <Table
+        rowKey="id"
+        columns={columns(customerStore)}
+        dataSource={data}
+        loading={loading}
+        pagination={{
+          current: pageNum,
+          pageSize: PAGE_SIZE,
+          total: total,
+          showTotal: total => (
+            <div
+              css={css`
+                font-size: 16px;
+                line-height: 32px;
+                margin-right: 8px;
+              `}
+            >
+              共{total}项
+            </div>
+          ),
+          onChange: (page, pageSize) => {
+            changePage(page)
+          },
+        }}
+      />
       <AddCustomerModal store={customerStore} />
     </div>
   )

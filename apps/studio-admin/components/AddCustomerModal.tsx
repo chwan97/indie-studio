@@ -12,7 +12,7 @@ import ModalMode from 'constants/ModalMode'
 function AddCustomerModal(props: { store: CustomerStore }) {
   const { store: customerStore } = props
 
-  const { modelMode, addModalVisible } = customerStore
+  const { modelMode, addModalVisible, currentItem } = customerStore
   const [form] = Form.useForm()
   const isAdd = ModalMode.add === modelMode
   useEffect(() => {
@@ -23,7 +23,7 @@ function AddCustomerModal(props: { store: CustomerStore }) {
       title={`${isAdd ? '创建' : '编辑'}客户信息`}
       open={addModalVisible}
       onOk={async () => {
-        await customerStore.add()
+        await customerStore.modalOKClick()
       }}
       onCancel={() => {
         customerStore.closeModal()

@@ -5,7 +5,7 @@ import Layout from 'components/AuthLayout'
 import { observer } from 'mobx-react'
 import { useRouter } from 'next/router'
 import PasswordField from 'components/PasswordField'
-import { useMainStore } from '../../hooks'
+import { useMainStore } from 'hooks'
 
 function Register() {
   const router = useRouter()

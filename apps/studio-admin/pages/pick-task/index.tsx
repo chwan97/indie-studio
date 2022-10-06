@@ -25,13 +25,11 @@ const columns: ColumnsType<DataType> = [
     title: '编号',
     dataIndex: 'id',
     key: 'id',
-    render: text => <a>{text}</a>,
   },
   {
     title: '客户',
     dataIndex: 'name',
     key: 'name',
-    render: text => <a>{text}</a>,
   },
   {
     title: '任务图片',

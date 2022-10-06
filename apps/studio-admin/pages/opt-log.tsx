@@ -4,7 +4,7 @@ import type { PaginationProps } from 'antd'
 import { Pagination } from 'antd'
 import dayjs from 'dayjs'
 import { css } from '@emotion/react'
-import { useMainStore } from '../hooks'
+import { useMainStore } from 'hooks'
 
 const showTotal: PaginationProps['showTotal'] = total => `共 ${total} 项`
 const PAGE_SIZE = 20
