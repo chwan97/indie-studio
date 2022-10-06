@@ -1,8 +1,9 @@
 import { makeAutoObservable } from 'mobx'
-import { FormInstance } from 'antd/lib/form/hooks/useForm'
-import ModalMode from 'constants/ModalMode'
-import MainStore from '../index'
 import { message } from 'antd'
+import { FormInstance } from 'antd/lib/form/hooks/useForm'
+
+import ModalMode from 'constantx/ModalMode'
+import MainStore from 'store'
 
 export const PAGE_SIZE = 10
 
@@ -13,11 +14,13 @@ export default class CustomerStore {
 
   addForm?: FormInstance<any>
 
-  searchForm
+  // searchForm
 
   total = 0
 
   pageNum = 1
+
+  pageSize = PAGE_SIZE
 
   data: any[] = []
 
@@ -27,8 +30,8 @@ export default class CustomerStore {
 
   currentItem?: any
 
-  constructor(mainStore: MainStore, searchForm: FormInstance<any>) {
-    this.searchForm = searchForm
+  constructor(mainStore: MainStore /* searchForm: FormInstance<any>*/) {
+    // this.searchForm = searchForm
     this.mainStore = mainStore
     makeAutoObservable(this)
   }
@@ -36,6 +39,10 @@ export default class CustomerStore {
   init = async () => {
     this.getTotal()
     this.query(1)
+  }
+
+  setPageSize = (pageSize: number) => {
+    this.pageSize = pageSize
   }
 
   toggleAddModalVisible = (visible: boolean) => {
@@ -196,7 +203,7 @@ export default class CustomerStore {
       this.loading = true
       const supabase = this.mainStore.supabase
       const id = this.mainStore.userInfo?.id
-      const base = (page - 1) * PAGE_SIZE
+      const base = (page - 1) * this.pageSize
 
       const { data: dBase, error } = await supabase
         .from('customer')
@@ -204,7 +211,7 @@ export default class CustomerStore {
         .eq('owner', id)
         .eq('deleted', false)
         .order('created_at', { ascending: false })
-        .range(base, base + PAGE_SIZE)
+        .range(base, base + this.pageSize)
 
       if (!error) {
         this.data = dBase

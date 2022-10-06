@@ -1,7 +1,8 @@
 import { makeAutoObservable } from 'mobx'
-import type { UploadRequestOption } from 'rc-upload/lib/interface'
-import Main from '../index'
 import { message } from 'antd'
+import type { UploadRequestOption } from 'rc-upload/lib/interface'
+
+import Main from 'store'
 
 export const PAGE_SIZE = 5
 

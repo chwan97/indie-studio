@@ -1,14 +1,15 @@
 import { Button, Form, Input } from 'antd'
-import { css } from '@emotion/react'
-import BackLoginBtn from '../components/BackLoginBtn'
-import Captcha from '../components/Captcha'
-import React, { ReactElement, useEffect } from 'react'
-import Layout from '../components/AuthLayout'
-import { useMainStore } from 'hooks'
-import { observer, useLocalObservable } from 'mobx-react'
-import RegisterStore from 'store/page/RegisterStore'
-import PasswordField from '../components/PasswordField'
 import { useRouter } from 'next/router'
+import React, { ReactElement, useEffect } from 'react'
+import { observer, useLocalObservable } from 'mobx-react'
+import { css } from '@emotion/react'
+
+import BackLoginBtn from 'components/BackLoginBtn'
+import Captcha from 'components/Captcha'
+import Layout from 'components/AuthLayout'
+import { useMainStore } from 'hooks'
+import RegisterStore from 'store/page/RegisterStore'
+import PasswordField from 'components/PasswordField'
 
 function Register() {
   const mainStore = useMainStore()

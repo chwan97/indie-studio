@@ -1,13 +1,10 @@
-import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface'
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons'
-import { message, Form, Upload, Modal, Button, Input } from 'antd'
-import type { UploadChangeParam } from 'antd/es/upload'
+import { Form, Modal, Input } from 'antd'
 import { observer } from 'mobx-react'
 import { css } from '@emotion/react'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 import CustomerStore from 'store/page/CustomerStore'
-import ModalMode from 'constants/ModalMode'
+import ModalMode from 'constantx/ModalMode'
 
 function AddCustomerModal(props: { store: CustomerStore }) {
   const { store: customerStore } = props

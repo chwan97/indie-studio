@@ -1,6 +1,5 @@
 import { css } from '@emotion/react'
-import { Form, Input, Modal } from 'antd'
-import { useState } from 'react'
+import { Form, Modal } from 'antd'
 import { ModalProps } from 'antd/lib/modal/Modal'
 
 export default function FiledModal(props: ModalProps) {

@@ -7,11 +7,11 @@ import Head from 'next/head'
 import { ConfigProvider, message } from 'antd'
 import locale from 'antd/lib/locale/zh_CN'
 import StoreContext from 'context/StoreContext'
+import SetRouter from 'components/SetRouter'
 import MainStore from 'store/index'
 
 import 'normalize.css'
 import 'styles/main.less'
-import SetRouter from '../components/SetRouter'
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode

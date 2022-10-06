@@ -1,10 +1,11 @@
 import { Button, Modal, Form, Input, message } from 'antd'
 import React, { ReactElement, useState } from 'react'
-import Layout from 'components/AdminLayout'
 import { css } from '@emotion/react'
-import PasswordField from 'components/PasswordField'
-import { useMainStore } from 'hooks'
 import { observer } from 'mobx-react'
+
+import { useMainStore } from 'hooks'
+import Layout from 'components/AdminLayout'
+import PasswordField from 'components/PasswordField'
 
 function Setting() {
   const mainStore = useMainStore()

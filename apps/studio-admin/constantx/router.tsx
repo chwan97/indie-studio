@@ -1,5 +1,11 @@
-import React from "react";
-import {BarsOutlined, BlockOutlined, FolderOpenOutlined, SettingOutlined, UserOutlined} from "@ant-design/icons";
+import React from 'react'
+import {
+  BarsOutlined,
+  BlockOutlined,
+  FolderOpenOutlined,
+  SettingOutlined,
+  UserOutlined,
+} from '@ant-design/icons'
 
 export const adminRouter = [
   {

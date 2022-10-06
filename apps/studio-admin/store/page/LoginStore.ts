@@ -1,10 +1,9 @@
 import { makeAutoObservable } from 'mobx'
-import { FormInstance } from 'antd/lib/form/hooks/useForm'
-import MainStore from '../index'
-import { Callbacks } from 'rc-field-form/lib/interface'
 import { message } from 'antd'
-import { getErrorTips } from 'utils'
-import { AuthError } from '../../errors'
+import { FormInstance } from 'antd/lib/form/hooks/useForm'
+
+import MainStore from '../index'
+import { AuthError } from 'errors'
 
 export default class ImageLibStore {
   form: FormInstance<any> | null = null

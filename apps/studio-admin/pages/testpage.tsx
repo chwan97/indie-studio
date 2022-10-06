@@ -1,8 +1,8 @@
 import { Button } from 'antd'
 import { css } from '@emotion/react'
+import { toJS } from 'mobx'
 
 import { useMainStore } from 'hooks'
-import { toJS } from 'mobx'
 
 export default function TestPage() {
   const mainStore = useMainStore()

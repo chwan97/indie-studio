@@ -1,14 +1,13 @@
 import React, { ReactElement, useEffect } from 'react'
-import { createClient } from '@supabase/supabase-js'
-import { Button, Checkbox, Form, Input } from 'antd'
+import { Button, Form, Input } from 'antd'
 import { css } from '@emotion/react'
 import { useRouter } from 'next/router'
+import { observer, useLocalObservable } from 'mobx-react'
 
 import Captcha from 'components/Captcha'
 import Layout from 'components/AuthLayout'
 import LoginStore from 'store/page/LoginStore'
 import { useMainStore } from 'hooks'
-import { observer, useLocalObservable } from 'mobx-react'
 
 function Login() {
   const router = useRouter()

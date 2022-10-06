@@ -1,7 +1,6 @@
 import { ReactElement, useEffect } from 'react'
 import { observer, useLocalObservable } from 'mobx-react'
-import { Space, Table, Tag, Button, Form, Image, DatePicker, Pagination } from 'antd'
-import { LockOutlined, UserOutlined } from '@ant-design/icons'
+import { Space, Table, Button, Form, Image, DatePicker } from 'antd'
 
 import Layout from 'components/AdminLayout'
 import AddImageModal from 'components/AddImageModal'
@@ -9,11 +8,9 @@ import type { ColumnsType } from 'antd/es/table'
 import React from 'react'
 import { css } from '@emotion/react'
 import { useMainStore } from 'hooks'
-import ImageLibStore, { PAGE_SIZE } from '../store/page/ImageLibStore'
+import ImageLibStore, { PAGE_SIZE } from 'store/page/ImageLibStore'
 import dayjs from 'dayjs'
-import { formatSize } from '../utils'
-
-const { RangePicker } = DatePicker
+import { formatSize } from 'utils'
 
 interface DataType {
   key: string
@@ -128,7 +125,16 @@ function ImageLib() {
     imageLibStore.init()
   }, [])
   return (
-    <div>
+    <div
+      css={css`
+        .ant-table {
+          height: 700px;
+        }
+
+        .ant-table-body {
+        }
+      `}
+    >
       <div
         css={css`
           padding-bottom: 15px;
@@ -151,6 +157,9 @@ function ImageLib() {
         columns={columns({ deleteImage })}
         dataSource={data}
         loading={loading}
+        scroll={{
+          y: 700,
+        }}
         pagination={{
           current: pageNum,
           pageSize: PAGE_SIZE,

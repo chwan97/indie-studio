@@ -1,8 +1,6 @@
 import { ReactElement } from 'react'
 import Layout from 'components/AdminLayout'
 import { Space, Table, Tag, Button, Form, Input, DatePicker } from 'antd'
-import { LockOutlined, UserOutlined } from '@ant-design/icons'
-
 import type { ColumnsType } from 'antd/es/table'
 import React from 'react'
 import { css } from '@emotion/react'

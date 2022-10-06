@@ -1,8 +1,6 @@
 import { makeAutoObservable } from 'mobx'
-import { createClient } from '@supabase/supabase-js'
 import HCaptcha from '@hcaptcha/react-hcaptcha'
 import { message } from 'antd'
-import { getErrorTips } from 'utils'
 import Main from './index'
 import { AuthError } from 'errors'
 

@@ -4,7 +4,7 @@ import { LoginOutlined } from '@ant-design/icons'
 import { css } from '@emotion/react'
 import { Layout, Menu, Button, Modal } from 'antd'
 import Brand from 'components/Brand'
-import { adminRouter as menuItems } from 'constants/router'
+import { adminRouter as menuItems } from 'constantx/router'
 import Loading from './LoadingForAdmin'
 import { useMainStore } from 'hooks'
 import { observer } from 'mobx-react'
@@ -41,7 +41,7 @@ function AdminLayout({ children }: Props) {
         <Brand compact />
         <Menu
           mode="inline"
-          defaultSelectedKeys={[router.pathname.replace('/', '')]}
+          selectedKeys={[router.pathname.replace('/', '')]}
           items={menuItems}
           onClick={item => {
             const { key } = item
@@ -94,6 +94,7 @@ function AdminLayout({ children }: Props) {
           css={css`
             margin: 24px 16px;
             background-color: white;
+            min-width: 0;
           `}
         >
           <div

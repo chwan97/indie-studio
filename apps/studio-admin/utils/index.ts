@@ -1,4 +1,4 @@
-import errorMsgToCN from 'constants/errorMsgMap'
+import errorMsgToCN from 'constantx/errorMsgMap'
 
 export function getErrorTips(rawMsg: string) {
   let res = '账号密码错误'
