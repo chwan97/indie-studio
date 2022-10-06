@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable, toJS } from 'mobx'
 import { message } from 'antd'
 import type { UploadRequestOption } from 'rc-upload/lib/interface'
 
@@ -13,7 +13,11 @@ export default class ImageLibStore {
 
   pageNum = 1
 
+  pageSize = PAGE_SIZE
+
   data: any[] = []
+
+  excludeIds: string[] = []
 
   loading = false
 
@@ -34,6 +38,14 @@ export default class ImageLibStore {
     this.query(page)
   }
 
+  setPageSize = (pageSize: number) => {
+    this.pageSize = pageSize
+  }
+
+  setExcludeIds = (excludeIds: string[]) => {
+    this.excludeIds = excludeIds
+  }
+
   getTotal = async () => {
     if (!this.main.userInfo?.id) {
       return
@@ -48,6 +60,8 @@ export default class ImageLibStore {
       })
       .eq('owner', id)
       .eq('deleted', false)
+      .not('id', 'in', `(${toJS(this.excludeIds)})`)
+
     this.total = count as number
   }
 
@@ -59,22 +73,23 @@ export default class ImageLibStore {
       this.loading = true
       const supabase = this.main.supabase
       const id = this.main.userInfo?.id
-      const base = (page - 1) * PAGE_SIZE
+      const base = (page - 1) * this.pageSize
 
       const { data: dBase, error } = await supabase
         .from('images')
         .select('id, file_name, size, src, type, created_at')
         .eq('owner', id)
         .eq('deleted', false)
+        .not('id', 'in', `(${toJS(this.excludeIds)})`)
         .order('created_at', { ascending: false })
-        .range(base, base + PAGE_SIZE)
+        .range(base, base + this.pageSize - 1)
 
       if (!error) {
         const keys = dBase.map(item => item.src)
         if (keys[0]) {
           const { data, error } = await supabase.storage
             .from('image-library')
-            .createSignedUrls(keys, 120)
+            .createSignedUrls(keys, 300)
           console.log('data', data)
           if (data && !error) {
             dBase.forEach((item, index) => {

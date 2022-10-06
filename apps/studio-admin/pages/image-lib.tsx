@@ -1,124 +1,27 @@
-import { ReactElement, useEffect } from 'react'
+import React, { ReactElement, useEffect } from 'react'
 import { observer, useLocalObservable } from 'mobx-react'
-import { Space, Table, Button, Form, Image, DatePicker } from 'antd'
+import { Table, Button, Form } from 'antd'
+import { css } from '@emotion/react'
 
 import Layout from 'components/AdminLayout'
 import AddImageModal from 'components/AddImageModal'
-import type { ColumnsType } from 'antd/es/table'
-import React from 'react'
-import { css } from '@emotion/react'
+import columns from 'components/ImageLibTableColumns'
 import { useMainStore } from 'hooks'
-import ImageLibStore, { PAGE_SIZE } from 'store/page/ImageLibStore'
-import dayjs from 'dayjs'
-import { formatSize } from 'utils'
-
-interface DataType {
-  key: string
-  id: string
-  name: string
-  age: number
-  address: string
-  status: string
-  tags: string[]
-}
-
-const columns: (option: any) => ColumnsType<DataType> = option => {
-  const { deleteImage } = option
-  return [
-    {
-      title: '编号',
-      dataIndex: 'id',
-      key: 'id',
-      width: 300,
-    },
-    {
-      title: '名称',
-      dataIndex: 'file_name',
-      key: 'file_name',
-    },
-    {
-      title: '预览',
-      dataIndex: 'src',
-      key: 'src',
-      render: src => (
-        <div
-          css={css`
-            width: 85px;
-            height: 85px;
-            border: 1px solid #eaeaea;
-            border-radius: 4px;
-            position: relative;
-            margin-bottom: 5px;
-            margin-right: 5px;
-
-            .ant-image {
-              width: 85px;
-              height: 85px;
-            }
-          `}
-        >
-          <Image
-            css={css`
-              max-width: 100%;
-              max-height: 100%;
-              position: absolute;
-              top: 50%;
-              left: 50%;
-              transform: translate(-50%, -50%);
-              width: unset;
-              height: unset;
-              vertical-align: unset;
-            `}
-            src={src}
-          ></Image>
-        </div>
-      ),
-    },
-    {
-      title: '类型',
-      dataIndex: 'type',
-      key: 'type',
-    },
-    {
-      title: '大小',
-      dataIndex: 'size',
-      key: 'size',
-      render: (size, { tags }) => <>{size && formatSize(size)}</>,
-    },
-    {
-      title: '创建日期',
-      key: 'created_at',
-      dataIndex: 'created_at',
-      render: (created_at, { tags }) => (
-        <>{created_at && dayjs(created_at).format('YYYY-MM-DD HH:mm:ss')}</>
-      ),
-    },
-    {
-      title: '操作',
-      key: 'action',
-      render: (_, record) => (
-        <Space size="middle">
-          <Button
-            type="link"
-            onClick={() => {
-              if (record?.id) {
-                deleteImage(record?.id)
-              }
-            }}
-          >
-            删除
-          </Button>
-        </Space>
-      ),
-    },
-  ]
-}
+import ImageLibStore from 'store/page/ImageLibStore'
 
 function ImageLib() {
   const mainStore = useMainStore()
   const imageLibStore = useLocalObservable(() => new ImageLibStore(mainStore))
-  const { loading, pageNum, total, data, toggleAddModalVisible, changePage, deleteImage } =
-    imageLibStore
+  const {
+    pageSize,
+    loading,
+    pageNum,
+    total,
+    data,
+    toggleAddModalVisible,
+    changePage,
+    deleteImage,
+  } = imageLibStore
 
   const [form] = Form.useForm()
   useEffect(() => {
@@ -162,7 +65,7 @@ function ImageLib() {
         }}
         pagination={{
           current: pageNum,
-          pageSize: PAGE_SIZE,
+          pageSize: pageSize,
           total: total,
           showTotal: total => (
             <div

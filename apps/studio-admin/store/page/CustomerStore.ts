@@ -211,7 +211,7 @@ export default class CustomerStore {
         .eq('owner', id)
         .eq('deleted', false)
         .order('created_at', { ascending: false })
-        .range(base, base + this.pageSize)
+        .range(base, base + this.pageSize - 1)
 
       if (!error) {
         this.data = dBase

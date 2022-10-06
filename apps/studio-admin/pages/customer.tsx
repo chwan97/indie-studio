@@ -5,7 +5,7 @@ import { observer, useLocalObservable } from 'mobx-react'
 import { Table, Button, Form, Input, DatePicker } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 
-import CustomerStore, { PAGE_SIZE } from 'store/page/CustomerStore'
+import CustomerStore from 'store/page/CustomerStore'
 import { useMainStore } from 'hooks'
 import Layout from 'components/AdminLayout'
 import columns from 'components/CustomerTableColumns'
@@ -19,7 +19,7 @@ function Customer() {
   const customerStore = useLocalObservable(() => {
     return new CustomerStore(mainStore)
   })
-  const { loading, pageNum, total, data, changePage } = customerStore
+  const { pageSize, loading, pageNum, total, data, changePage } = customerStore
 
   useEffect(() => {
     customerStore.init()
@@ -102,7 +102,7 @@ function Customer() {
         loading={loading}
         pagination={{
           current: pageNum,
-          pageSize: PAGE_SIZE,
+          pageSize: pageSize,
           total: total,
           showTotal: total => (
             <div

@@ -1,7 +1,6 @@
 import { css } from '@emotion/react'
 import { Modal, Table } from 'antd'
 import columns from './CustomerTableColumns'
-import CustomerStore, { PAGE_SIZE } from '../store/page/CustomerStore'
 import AddStore from '../store/page/pick-task/AddStore'
 import React from 'react'
 import { observer } from 'mobx-react'
@@ -18,7 +17,7 @@ function BindCustomerModal(props: { addStore: AddStore }) {
     onModalCustomerOk,
     onModalCustomerCancel,
   } = addStore
-  const { data, loading, pageNum, total, changePage } = customerStore
+  const { pageSize, data, loading, pageNum, total, changePage } = customerStore
   return (
     <Modal
       width={1100}
@@ -55,7 +54,7 @@ function BindCustomerModal(props: { addStore: AddStore }) {
         loading={loading}
         pagination={{
           current: pageNum,
-          pageSize: PAGE_SIZE,
+          pageSize: pageSize,
           total: total,
           showTotal: total => (
             <div

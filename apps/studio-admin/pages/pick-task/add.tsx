@@ -7,11 +7,20 @@ import { observer, useLocalObservable } from 'mobx-react'
 import dynamic from 'next/dynamic'
 
 import { useMainStore } from 'hooks'
-import CustomerStore, { PAGE_SIZE } from 'store/page/CustomerStore'
+import CustomerStore from 'store/page/CustomerStore'
 import AddStore from 'store/page/pick-task/AddStore'
 import Layout from 'components/AdminLayout'
+import ImageLibStore from 'store/page/ImageLibStore'
 
 const BindCustomerModal = dynamic(() => import('../../components/BindCustomerModal'), {
+  ssr: false,
+})
+
+const BindImagesModal = dynamic(() => import('../../components/BindImagesModal'), {
+  ssr: false,
+})
+
+const SelectedImageModal = dynamic(() => import('../../components/SelectedImageModal'), {
   ssr: false,
 })
 
@@ -19,26 +28,27 @@ function Add() {
   const router = useRouter()
   const mainStore = useMainStore()
   const customerStore = useLocalObservable(() => new CustomerStore(mainStore))
-  const addStore = useLocalObservable(() => new AddStore(mainStore, customerStore))
-
+  const imageLibStore = useLocalObservable(() => new ImageLibStore(mainStore))
+  const addStore = useLocalObservable(() => new AddStore(mainStore, customerStore, imageLibStore))
+  useEffect(() => {
+    if (router.query.id) {
+      addStore.init(router.query.id as string)
+    }
+  }, [router.query])
   const {
     selectedImages,
     disable,
     customer,
     imageList,
-    init,
     setDisable,
     changeCustomer,
     addImage,
     deleteImage,
     deleteSelectedImage,
     addSelectedImage,
+    submit,
   } = addStore
-  const { name, mail, address, contact } = customer
-
-  useEffect(() => {
-    init()
-  }, [])
+  const { name, mail, address, contact } = customer || {}
 
   const imageListBuilder = (list: any[], deleteFn: any) => {
     return (
@@ -143,18 +153,21 @@ function Add() {
           >
             <Form.Item name="customer" label=" 客户" rules={[{ required: true }]}>
               <>
-                <div
-                  css={css`
-                    width: 400px;
-                    border: 1px solid #eaeaea;
-                    padding: 7px;
-                  `}
-                >
-                  <div>姓名：{name}</div>
-                  <div>邮箱：{mail}</div>
-                  <div>地址：{address}</div>
-                  <div>联系方式：{contact}</div>
-                </div>
+                {customer && (
+                  <div
+                    css={css`
+                      width: 400px;
+                      border: 1px solid #eaeaea;
+                      padding: 7px;
+                    `}
+                  >
+                    <div>姓名：{name}</div>
+                    <div>邮箱：{mail}</div>
+                    <div>地址：{address}</div>
+                    <div>联系方式：{contact}</div>
+                  </div>
+                )}
+
                 <div>
                   <Button
                     css={css`
@@ -236,12 +249,23 @@ function Add() {
           </Form>
           <div
             css={css`
-              text-align: center;
+              text-align: left;
             `}
           >
             <Button
+              css={css`
+                margin-left: 188px;
+                margin-top: 62px;
+              `}
               onClick={() => {
-                router.push('/pick-task')
+                Modal.confirm({
+                  onOk: () => {
+                    router.push('/pick-task')
+                  },
+                  cancelText: '取消',
+                  okText: '确定',
+                  content: '确定要退出创建吗？',
+                })
               }}
             >
               取消
@@ -251,6 +275,7 @@ function Add() {
               css={css`
                 margin-left: 15px;
               `}
+              onClick={submit}
             >
               提交
             </Button>
@@ -258,6 +283,8 @@ function Add() {
         </div>
       </div>
       <BindCustomerModal addStore={addStore} />
+      <BindImagesModal addStore={addStore} />
+      <SelectedImageModal addStore={addStore} />
     </>
   )
 }

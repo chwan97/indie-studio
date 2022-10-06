@@ -40,7 +40,7 @@ export default function LoadingForAdmin() {
       <div
         css={css`
           position: absolute;
-          z-index: 1;
+          z-index: 100;
           width: 100%;
           height: 100%;
           background-color: #fff;
