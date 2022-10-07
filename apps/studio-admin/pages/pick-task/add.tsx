@@ -11,6 +11,7 @@ import CustomerStore from 'store/page/CustomerStore'
 import AddStore from 'store/page/pick-task/AddStore'
 import Layout from 'components/AdminLayout'
 import ImageLibStore from 'store/page/ImageLibStore'
+import ModalMode from 'constantx/ModalMode'
 
 const BindCustomerModal = dynamic(() => import('../../components/BindCustomerModal'), {
   ssr: false,
@@ -41,6 +42,7 @@ function Add() {
     customer,
     imageList,
     submitBtnLoading,
+    mode,
     setDisable,
     changeCustomer,
     addImage,
@@ -50,6 +52,7 @@ function Add() {
     submit,
   } = addStore
   const { name, mail, address, contact } = customer || {}
+  const isAdd = mode === ModalMode.add
 
   const imageListBuilder = (list: any[], deleteFn: any) => {
     return (
@@ -138,7 +141,7 @@ function Add() {
             margin: 10px 0;
           `}
         >
-          创建选片任务
+          {isAdd ? '创建' : '编辑'}选片任务
         </h2>
         <div
           css={css`
@@ -266,7 +269,7 @@ function Add() {
                   },
                   cancelText: '取消',
                   okText: '确定',
-                  content: '确定要退出创建吗？',
+                  content: `确定要退出${isAdd ? '创建' : '编辑'}吗？`,
                 })
               }}
             >
