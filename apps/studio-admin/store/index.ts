@@ -71,12 +71,7 @@ export default class Index {
       if (event == 'SIGNED_IN') {
         await this.getUserInfo()
         const currentPath = this.router?.pathname
-        if (
-          currentPath &&
-          ['/login', '/inform/reset-password', '/inform/register', '/change-email'].some(path => {
-            return currentPath.indexOf(path) !== -1
-          })
-        ) {
+        if (currentPath?.indexOf('/login') !== -1) {
           console.log('currentPath', currentPath)
           this.router?.push('/image-lib')
         }

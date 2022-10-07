@@ -20,7 +20,9 @@ function Login() {
 
   useEffect(() => {
     // 权限检查
-    loginStore.checkIfLogin()
+    setTimeout(() => {
+      loginStore.checkIfLogin()
+    }, 500)
   }, [])
 
   return (

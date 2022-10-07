@@ -37,6 +37,7 @@ export default class AuthStore {
       message.info('出现错误，退出登录失败')
       return
     }
+    this.main.userInfo = null
     message.info('退出登录成功')
   }
 
@@ -46,7 +47,6 @@ export default class AuthStore {
 
     const { error } = await this.main.supabase.auth.api.resetPasswordForEmail(email, {
       captchaToken,
-      redirectTo: `${protocol}${host}/inform/reset-password`,
     })
     console.log(error, 'error')
     if (error) {
@@ -64,10 +64,8 @@ export default class AuthStore {
       throw new AuthError()
     }
   }
-
+  // redirectTo: `${protocol}${host}${port}/inform/register`,
   register = async (email: string, password: string, captchaToken: string, name: string) => {
-    const location = document.location
-    const { protocol, host } = location
     const { user, session, error } = await this.main.supabase.auth.signUp(
       {
         email,
@@ -75,7 +73,6 @@ export default class AuthStore {
       },
       {
         captchaToken,
-        redirectTo: `${protocol}${host}/inform/register`,
         data: {
           name: name,
           signFor: 'admin',

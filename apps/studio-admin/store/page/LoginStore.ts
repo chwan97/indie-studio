@@ -22,7 +22,7 @@ export default class ImageLibStore {
   }
 
   checkIfLogin = () => {
-    if (this.mainStore?.userInfo?.id) {
+    if (this.mainStore?.userInfo?.id && this.mainStore.supabase.auth.user()) {
       this.mainStore.router?.push('/image-lib')
     }
   }

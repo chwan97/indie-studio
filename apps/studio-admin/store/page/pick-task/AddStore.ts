@@ -2,6 +2,7 @@ import { makeAutoObservable } from 'mobx'
 import { message } from 'antd'
 
 import MainStore from 'store'
+import cloneDeep from 'lodash/cloneDeep'
 import CustomerStore from 'store/page/CustomerStore'
 import ImageLibStore from 'store/page/ImageLibStore'
 import ModalMode from 'constantx/ModalMode'
@@ -16,7 +17,13 @@ export default class AddStore {
 
   mode = ModalMode.add
 
+  initSuccess = false
+
   taskId?: string
+
+  initImageList?: any
+
+  submitBtnLoading = false
 
   customer: {
     id: string
@@ -42,6 +49,8 @@ export default class AddStore {
 
   markSelectModalVisible = false
 
+  loading = false
+
   get unselectedImages() {
     return this.imageList.filter(item => !item.selected)
   }
@@ -62,9 +71,73 @@ export default class AddStore {
   }
 
   init = async (id: string) => {
-    this.taskId = id
-    this.mode = ModalMode.edit
-    console.log('init id', id)
+    if (id) {
+      this.taskId = id
+      this.mode = ModalMode.edit
+      await this.pullTaskDetail()
+    } else {
+      this.mode = ModalMode.add
+    }
+  }
+
+  pullTaskDetail = async () => {
+    this.mainStore.display.loading = true
+    try {
+      this.loading = true
+      const supabase = this.mainStore.supabase
+      const { data, error } = await supabase
+        .from('tasks')
+        .select(
+          `
+        id, disabled, created_at, status,
+        task_image(id, selected, images (*)),
+        customer(id, name, mail, address, contact, created_at)
+        `
+        )
+        .eq('id', this.taskId)
+        .eq('deleted', false)
+      console.log('data, error', data, error)
+      if (error || !data?.[0]) {
+        message.error('任务详情获取失败.')
+      } else {
+        this.initSuccess = true
+        await this.dealData(data?.[0])
+      }
+    } finally {
+      this.mainStore.display.loading = false
+    }
+  }
+
+  dealData = async (data: any) => {
+    const { customer, task_image, disable } = data
+    this.customer = customer
+    this.disable = disable
+
+    this.imageList = task_image.map((item: any) => {
+      const { id, selected, images } = item
+      return {
+        ...images,
+        selected,
+        joinId: id,
+      }
+    })
+
+    this.initImageList = cloneDeep(this.imageList)
+    console.log('this.initImageList', this.initImageList)
+    await this.getSignUrl()
+  }
+
+  getSignUrl = async () => {
+    const keys = this.imageList.map(item => item.src)
+    const supabase = this.mainStore.supabase
+
+    const { data, error } = await supabase.storage.from('image-library').createSignedUrls(keys, 300)
+    console.log('data', data)
+    if (data && !error) {
+      this.imageList.forEach((item, index) => {
+        item.src = data[index].signedURL
+      })
+    }
   }
 
   toggleMarkSelectModal = (val: boolean) => {
@@ -180,7 +253,7 @@ export default class AddStore {
     const id = this.mainStore.userInfo?.id
     const customerId = this.customer?.id
     const disable = this.disable
-
+    this.submitBtnLoading = true
     if (this.mode === ModalMode.add) {
       // 新建
       const { data, error } = await supabase
@@ -209,6 +282,76 @@ export default class AddStore {
       }
     } else {
       // 编辑
+      if (!this.initSuccess || !this.taskId) {
+        message.warning('任务详情初始化失败无法提交编辑结果')
+      }
+      const { data, error } = await supabase
+        .from('tasks')
+        .update({ disabled: this.disable, customer: this.customer?.id })
+        .match({ id: this.taskId })
+      if (error) {
+        message.error(`选片任务编辑失败${error?.message}`)
+        return
+      }
+      // 计算 新增的任务图片插入 减少的任务图片删除 新增的已有已选图片更新 新增的未有已选图片插入  减少的已选图片更新
+      const addImgs = this.imageList.filter((item: any) => {
+        return this.initImageList.every((iItem: any) => {
+          return iItem.id !== item.id
+        })
+      })
+      const reduceImgs = this.initImageList.filter((iItem: any) => {
+        return this.imageList.every((item: any) => {
+          return iItem.id !== item.id
+        })
+      })
+
+      const changeImgs = this.imageList.filter((item: any) => {
+        return this.initImageList.some((iItem: any) => {
+          return iItem.id === item.id && iItem.selected !== item.selected
+        })
+      })
+
+      if (addImgs?.[0]) {
+        const { error } = await supabase.from('task_image').insert(
+          addImgs?.map(item => {
+            return {
+              image_id: item.id,
+              task_id: this.taskId,
+              selected: item.selected || false,
+            }
+          })
+        )
+        if (error) {
+          console.error(error, 'task_image insert in edit')
+        }
+      }
+      if (reduceImgs?.[0]) {
+        const { error } = await supabase
+          .from('task_image')
+          .delete()
+          .match(
+            reduceImgs?.map((item: any) => {
+              return item.joinId
+            })
+          )
+        if (error) {
+          console.error(error, 'task_image delete in edit')
+        }
+      }
+      if (changeImgs?.[0]) {
+        for (const changeImg of changeImgs) {
+          const { error } = await supabase
+            .from('task_image')
+            .update({ selected: changeImg.selected || false })
+            .match({ id: changeImg.joinId })
+          if (error) {
+            console.error(error, 'task_image update in edit')
+          }
+        }
+      }
+      message.info('任务编辑成功!')
+      this.mainStore.router?.replace('/pick-task')
     }
+    this.submitBtnLoading = false
   }
 }

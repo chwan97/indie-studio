@@ -1,4 +1,4 @@
-## studio-admin
+## customer-portal
 
 用户门户 *todo*
 

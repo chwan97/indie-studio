@@ -21,6 +21,7 @@ import IndexStore from 'store/page/pick-task/IndexStore'
 import dayjs from 'dayjs'
 import { TaskStatus } from 'constantx'
 import { useMainStore } from 'hooks'
+import { deleteCheck } from '../../utils'
 
 const { RangePicker } = DatePicker
 
@@ -214,7 +215,8 @@ function Index() {
             发送选片邀请
           </a>
           <a
-            onClick={() => {
+            onClick={async () => {
+              await deleteCheck()
               deleteItem(record)
             }}
           >
@@ -249,7 +251,7 @@ function Index() {
             name="horizontal_login"
             layout="inline"
             onFinish={vals => {
-              console.log('vals', vals)
+              // console.log('vals', vals)
               search(vals)
             }}
           >

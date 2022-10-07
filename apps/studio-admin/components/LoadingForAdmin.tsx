@@ -2,10 +2,14 @@ import { css } from '@emotion/react'
 import { useRouter } from 'next/router'
 import { useState, useEffect, useRef } from 'react'
 import { Spin } from 'antd'
+import { useMainStore } from '../hooks'
+import { observer } from 'mobx-react'
 
-export default function LoadingForAdmin() {
+function LoadingForAdmin() {
   const router = useRouter()
-  const [loading, setLoading] = useState(false)
+  const mainStore = useMainStore()
+  const { loading, setLoading } = mainStore.display
+
   const ref = useRef<null | number>(null)
 
   useEffect(() => {
@@ -58,3 +62,5 @@ export default function LoadingForAdmin() {
     )
   return null
 }
+
+export default observer(LoadingForAdmin)

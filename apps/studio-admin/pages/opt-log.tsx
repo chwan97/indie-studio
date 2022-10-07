@@ -5,17 +5,19 @@ import { Pagination } from 'antd'
 import dayjs from 'dayjs'
 import { css } from '@emotion/react'
 import { useMainStore } from 'hooks'
+import { observer } from 'mobx-react'
 
 const showTotal: PaginationProps['showTotal'] = total => `共 ${total} 项`
 const PAGE_SIZE = 20
 
-export default function OptLog() {
+function OptLog() {
   const mainStore = useMainStore()
   const supabase = mainStore.supabase
 
   const [totalCount, setTotalCount] = useState(0)
   const [data, setData] = useState<any[]>([])
   const query = async (page: number) => {
+    mainStore.display.loading = true
     if (!mainStore.userInfo?.id) {
       return
     }
@@ -31,6 +33,7 @@ export default function OptLog() {
     if (!error) {
       setData(data)
     }
+    mainStore.display.loading = false
   }
   useEffect(() => {
     ;(async () => {
@@ -114,3 +117,5 @@ export default function OptLog() {
 OptLog.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>
 }
+
+export default observer(OptLog)

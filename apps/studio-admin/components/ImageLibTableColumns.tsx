@@ -1,7 +1,7 @@
 import { ColumnsType } from 'antd/es/table'
 import { css } from '@emotion/react'
 import { Button, Image, Space } from 'antd'
-import { formatSize } from '../utils'
+import { deleteCheck, formatSize } from '../utils'
 import dayjs from 'dayjs'
 import React from 'react'
 
@@ -83,7 +83,12 @@ const columns: (option: any) => ColumnsType<any> = option => {
         <Space size="middle">
           <Button
             type="link"
-            onClick={() => {
+            css={css`
+              padding-left: 0;
+              padding-right: 5px;
+            `}
+            onClick={async () => {
+              await deleteCheck()
               if (record?.id) {
                 deleteImage(record?.id)
               }

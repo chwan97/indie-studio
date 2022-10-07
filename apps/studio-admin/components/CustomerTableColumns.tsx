@@ -4,6 +4,7 @@ import dayjs from 'dayjs'
 import { Button } from 'antd'
 import { css } from '@emotion/react'
 import React from 'react'
+import { deleteCheck } from '../utils'
 
 const columns: (customerStore: CustomerStore, options?: any) => ColumnsType<any> = (
   customerStore,
@@ -55,7 +56,8 @@ const columns: (customerStore: CustomerStore, options?: any) => ColumnsType<any>
           <Button
             type="link"
             css={css`
-              padding: 0 5px;
+              padding-left: 0;
+              padding-right: 5px;
             `}
             onClick={() => {
               customerStore.toggleEditModal(record)
@@ -68,7 +70,8 @@ const columns: (customerStore: CustomerStore, options?: any) => ColumnsType<any>
               padding: 0 5px;
             `}
             type="link"
-            onClick={() => {
+            onClick={async () => {
+              await deleteCheck()
               customerStore.deleted(record)
             }}
           >
