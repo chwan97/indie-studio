@@ -190,17 +190,15 @@ export default class AddStore {
         ])
       if (!error && data?.[0]) {
         const { id: taskId } = data?.[0]
-        const { data: sData, error: sError } = await supabase
-          .from('image_selected_task_join')
-          .insert(
-            this.imageList?.map(item => {
-              return {
-                image: item.id,
-                task: taskId,
-                selected: item.selected || false,
-              }
-            })
-          )
+        const { data: sData, error: sError } = await supabase.from('task_image').insert(
+          this.imageList?.map(item => {
+            return {
+              image_id: item.id,
+              task_id: taskId,
+              selected: item.selected || false,
+            }
+          })
+        )
         if (!sError) {
           this.mainStore.router?.push('/pick-task')
         } else {

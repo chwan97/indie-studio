@@ -18,13 +18,10 @@ function Login() {
     loginStore.setForm(form)
   }, [form])
 
-  const onFinish = (values: any) => {
-    console.log('Success:', values)
-  }
-
-  const onFinishFailed = (errorInfo: any) => {
-    console.log('Failed:', errorInfo)
-  }
+  useEffect(() => {
+    // 权限检查
+    loginStore.checkIfLogin()
+  }, [])
 
   return (
     <div

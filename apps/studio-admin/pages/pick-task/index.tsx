@@ -1,10 +1,14 @@
-import { ReactElement } from 'react'
+import { ReactElement, useEffect } from 'react'
 import Layout from 'components/AdminLayout'
-import { Space, Table, Tag, Button, Form, Input, DatePicker } from 'antd'
+import { Switch, Table, Tooltip, Button, Form, Input, DatePicker } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import React from 'react'
 import { css } from '@emotion/react'
 import { useRouter } from 'next/router'
+import { useMainStore } from '../../hooks'
+import { observer, useLocalObservable } from 'mobx-react'
+import IndexStore from 'store/page/pick-task/IndexStore'
+import dayjs from 'dayjs'
 
 const { RangePicker } = DatePicker
 
@@ -26,76 +30,104 @@ const columns: ColumnsType<DataType> = [
   },
   {
     title: '客户',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'customer',
+    key: 'customer',
+    render: (customer: any) => {
+      return (
+        <Tooltip
+          title={
+            <div>
+              <div>姓名：{customer.name}</div>
+              <div>邮箱：{customer.mail}</div>
+              <div>地址：{customer.address}</div>
+              <div>联系方式：{customer.contact}</div>
+            </div>
+          }
+        >
+          <a>{customer.name}</a>
+        </Tooltip>
+      )
+    },
   },
   {
     title: '任务图片',
-    dataIndex: 'age',
-    key: 'age',
+    dataIndex: 'images',
+    key: 'images',
+    render: (images: any) => {
+      return images.length
+    },
   },
   {
     title: '已选图片',
-    dataIndex: 'address',
-    key: 'address',
+    dataIndex: 'images',
+    key: 'images',
+    render: (images: any) => {
+      return images.filter((item: any) => item.selected).length
+    },
   },
   {
     title: '当前状态',
     dataIndex: 'status',
     key: 'status',
+    render: (status: any) => <>未开始</>,
   },
   {
     title: '创建日期',
-    key: 'tags',
-    dataIndex: 'tags',
-    render: (_, { tags }) => (
-      <>
-        {tags.map(tag => {
-          let color = tag.length > 5 ? 'geekblue' : 'green'
-          if (tag === 'loser') {
-            color = 'volcano'
-          }
-          return (
-            <Tag color={color} key={tag}>
-              {tag.toUpperCase()}
-            </Tag>
-          )
-        })}
-      </>
+    key: 'created_at',
+    dataIndex: 'created_at',
+    render: (created_at: any) => (
+      <>{created_at && dayjs(created_at).format('YYYY-MM-DD HH:mm:ss')}</>
+    ),
+  },
+  {
+    title: '停用',
+    key: 'disable',
+    render: (disable, record) => (
+      <Switch
+        checked={disable}
+        onChange={res => {
+          console.log(res)
+        }}
+      />
     ),
   },
   {
     title: '操作',
     key: 'action',
+    width: 220,
     render: (_, record) => (
-      <Space size="middle">
+      <div
+        css={css`
+          a {
+            margin-right: 10px;
+          }
+        `}
+      >
         <a>编辑</a>
         <a>发送选片邀请</a>
         <a>删除</a>
-        <a>停用</a>
-      </Space>
+      </div>
     ),
   },
 ]
 
-const data: DataType[] = new Array(75).fill('').map((_, index) => {
-  return {
-    key: String(index),
-    id: '212d3215123',
-    name: 'John Brown',
-    age: 32,
-    address: '12',
-    status: '未选择',
-    tags: ['nice', 'developer'],
-  }
-})
-
-export default function Index() {
+function Index() {
   const [form] = Form.useForm()
   const router = useRouter()
-
+  const mainStore = useMainStore()
+  const indexStore = useLocalObservable(() => new IndexStore(mainStore))
+  useEffect(() => {
+    indexStore.init()
+  }, [])
+  const { data } = indexStore
   return (
-    <div>
+    <div
+      css={css`
+        .ant-table {
+          height: 700px;
+        }
+      `}
+    >
       <div
         css={css`
           padding-bottom: 15px;
@@ -145,7 +177,13 @@ export default function Index() {
           添加选片任务
         </Button>
       </div>
-      <Table columns={columns} dataSource={data} />
+      <Table
+        columns={columns}
+        dataSource={data}
+        scroll={{
+          y: 700,
+        }}
+      />
     </div>
   )
 }
@@ -153,3 +191,5 @@ export default function Index() {
 Index.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>
 }
+
+export default observer(Index)

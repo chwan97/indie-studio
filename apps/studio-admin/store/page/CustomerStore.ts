@@ -15,7 +15,6 @@ export default class CustomerStore {
   addForm?: FormInstance<any>
 
   // searchForm
-
   total = 0
 
   pageNum = 1
@@ -222,6 +221,7 @@ export default class CustomerStore {
       this.loading = false
     }
   }
+
   deleted = async (record: any) => {
     const infoID = record.id
     if (!this.mainStore.userInfo?.id) {

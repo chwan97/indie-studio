@@ -21,6 +21,12 @@ export default class ImageLibStore {
     this.form = form
   }
 
+  checkIfLogin = () => {
+    if (this.mainStore?.userInfo?.id) {
+      this.mainStore.router?.push('/image-lib')
+    }
+  }
+
   login = async () => {
     this.btnLoading = true
     try {

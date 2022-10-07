@@ -33,9 +33,6 @@ function ImageLib() {
         .ant-table {
           height: 700px;
         }
-
-        .ant-table-body {
-        }
       `}
     >
       <div
