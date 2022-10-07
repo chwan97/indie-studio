@@ -200,7 +200,7 @@ export default class AddStore {
           })
         )
         if (!sError) {
-          this.mainStore.router?.push('/pick-task')
+          this.mainStore.router?.replace('/pick-task')
         } else {
           message.error(`选片任务图片关联失败，${sError?.message}`)
         }

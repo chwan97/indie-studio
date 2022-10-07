@@ -126,7 +126,7 @@ function Add() {
           `}
           type="link"
           onClick={() => {
-            router.push('/pick-task')
+            router.back()
           }}
         >
           回到选片任务列表

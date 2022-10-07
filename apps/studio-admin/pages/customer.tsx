@@ -3,7 +3,6 @@ import dayjs from 'dayjs'
 import { css } from '@emotion/react'
 import { observer, useLocalObservable } from 'mobx-react'
 import { Table, Button, Form, Input, DatePicker } from 'antd'
-import type { ColumnsType } from 'antd/es/table'
 
 import CustomerStore from 'store/page/CustomerStore'
 import { useMainStore } from 'hooks'

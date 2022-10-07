@@ -52,6 +52,15 @@ export default function TestPage() {
       >
         插入日志
       </Button>
+
+      <Button
+        type="primary"
+        onClick={async () => {
+          mainStore.log('测试' + Math.random())
+        }}
+      >
+        查看选片任务
+      </Button>
     </div>
   )
 }

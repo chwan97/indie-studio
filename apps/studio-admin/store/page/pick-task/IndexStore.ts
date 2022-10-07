@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable, toJS } from 'mobx'
 import MainStore from 'store'
 import { message } from 'antd'
 
@@ -11,7 +11,7 @@ export default class IndexStore {
 
   pageNum = 1
 
-  params = {}
+  params: any = {}
 
   pageSize = PAGE_SIZE
 
@@ -34,22 +34,89 @@ export default class IndexStore {
     await this.query(page)
   }
 
+  setDisabled = async (disabled: boolean, record: any) => {
+    const supabase = this.mainStore.supabase
+    const recordId = record.id
+    if (!supabase || !recordId) {
+      return
+    }
+    const { data, error } = await supabase
+      .from('tasks')
+      .update({ disabled: disabled })
+      .match({ id: recordId })
+
+    this.data.forEach((item, index) => {
+      if (item.id === record.id) {
+        this.data[index].disabled = disabled
+      }
+    })
+    this.data = [...this.data]
+  }
+
+  deleteItem = async (record: any) => {
+    const supabase = this.mainStore.supabase
+    const recordId = record.id
+    if (!supabase || !recordId) {
+      return
+    }
+    const { data, error } = await supabase
+      .from('tasks')
+      .update({ deleted: true })
+      .match({ id: recordId })
+    if (error) {
+      message.warning(`删除失败！${error.message}`)
+    } else {
+      message.info('删除成功！')
+      this.getTotal()
+      this.changePage(this.pageNum)
+    }
+  }
+
   getTotal = async () => {
     if (!this.mainStore.userInfo?.id) {
       return
     }
     const supabase = this.mainStore.supabase
     const id = this.mainStore.userInfo?.id
-    const { error, count } = await supabase
+    let query = supabase
       .from('tasks')
       .select('id', {
         count: 'exact',
         head: true,
       })
       .eq('owner', id)
-      .eq('deleted', false)
+
+    query = this.addQueryParams(query)
+
+    const { error, count } = await query.eq('deleted', false)
     this.total = count as number
     console.log('count', count)
+  }
+
+  search = async (params: any) => {
+    this.params = params
+    this.getTotal()
+    this.query(1)
+  }
+
+  addQueryParams = (raw: any) => {
+    let query = raw
+    if (this.params.id) {
+      const id = String(this.params.id).trim()
+      query = query.eq('id', id)
+    }
+    if (this.params.name) {
+      query = query.textSearch('customer.name', `'${this.params.name}'`)
+    }
+    if (this.params?.dates?.[0]) {
+      const formatForSupabbase = 'YYYY-MM-DDTHH:mm:ss+08:00'
+      const [beginDate, endDate] = toJS(this.params?.dates)
+
+      query = query
+        .gte('created_at', `'${beginDate.format(formatForSupabbase)}'`)
+        .lte('created_at', `'${endDate.format(formatForSupabbase)}'`)
+    }
+    return query
   }
 
   query = async (page: number) => {
@@ -61,18 +128,17 @@ export default class IndexStore {
       const supabase = this.mainStore.supabase
       const id = this.mainStore.userInfo?.id
       const base = (page - 1) * this.pageSize
-
-      const { data: dBase, error } = await supabase
-        .from('tasks')
-        .select(
-          `
-        id, disabled, created_at, status,
-        customer (id, name, mail, address, contact, created_at),
-        images (*)
-        
+      let query = supabase.from('tasks').select(
         `
-          // images (id, file_name, size, src, type, created_at, task_image (selected))
-        )
+        id, disabled, created_at, status,
+        task_image(selected, images (*)),
+        customer!inner(id, name, mail, address, contact, created_at)
+        `
+      )
+
+      query = this.addQueryParams(query)
+
+      const { data: dBase, error } = await query
         .eq('owner', id)
         .eq('deleted', false)
         .order('created_at', { ascending: false })
@@ -80,29 +146,6 @@ export default class IndexStore {
 
       if (!error) {
         this.data = dBase
-        // {
-        //   "id": "70671db4-d112-442b-b1bf-4f432c9a783b",
-        //   "disabled": true,
-        //   "created_at": "2022-10-06T13:08:44.260491+00:00",
-        //   "customer": {
-        //   "id": "fde340d4-1cce-406a-9dc6-ac0eb10d8d28",
-        //     "name": "weqd",
-        //     "mail": "23@sad.com",
-        //     "address": "dasfsad",
-        //     "contact": "dasdsad(qq)",
-        //     "created_at": "2022-10-06T03:11:16.791924+00:00"
-        // },
-        //   "images": [
-        //   {
-        //     "id": "cad4dd07-3029-427a-98f9-6af14d1a2118",
-        //     "file_name": "2021525-211328.jpeg",
-        //     "size": "6188",
-        //     "src": "rc-upload-1665021082586-3",
-        //     "type": "image/jpeg",
-        //     "created_at": "2022-10-06T01:51:36.518771+00:00"
-        //   }
-        // ]
-        console.log(this.data, 'this.data')
       } else {
         message.error(`列表获取失败!${error.message}`)
       }

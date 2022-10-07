@@ -1,4 +1,3 @@
-import { Button } from 'ui'
 import Head from 'next/head'
 import React from 'react'
 import { css } from '@emotion/react'
